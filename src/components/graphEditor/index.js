@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, setState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
   removeElements,
-  Controls,
+  Controls
 } from 'react-flow-renderer';
 import Sidebar from '../sidebar';
 import './dnd.css';
+import taskNode from './task_node';
 const initialElements = [
   {
     id: '1',
@@ -14,15 +15,27 @@ const initialElements = [
     data: { label: 'input node' },
     position: { x: 250, y: 5 },
   },
+  {
+    id: '2',
+    type: 'taskNode',
+    data: { label: 'task node', code: "this is a test" },
+    position: { x: 350, y: 5 },
+  },
 ];
 let id = 0;
 const getId = () => `dndnode_${id++}`;
-const GraphEditor = () => {
+
+const nodeTypes = {
+  taskNode
+};
+
+
+const GraphEditor = ({selectedNode, setSelectedNode}) => {
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [elements, setElements] = useState(initialElements);
 
-  const [selectedNode, setSelectedNode] = useState({id: -1, data: {label: 'test'}});
+  //const [selectedNode, setSelectedNode] = useState({id: -1, data: {label: 'test'}});
 
   const [selectedNodeName, setSelectedNodeName] = useState();
 
@@ -48,6 +61,7 @@ const GraphEditor = () => {
   }, [selectedNodeName]);
 
   const onConnect = (params) => setElements((els) => addEdge(params, els));
+  const onNodeDragStart = (evt, node) => setSelectedNode(node);
   const onElementsRemove = (elementsToRemove) =>
     setElements((els) => removeElements(elementsToRemove, els));
   const onLoad = (_reactFlowInstance) =>
@@ -55,6 +69,7 @@ const GraphEditor = () => {
   const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
+    
   };
   const onDrop = (event) => {
     event.preventDefault();
@@ -71,19 +86,23 @@ const GraphEditor = () => {
       data: { label: `${type} node` },
     };
     setElements((es) => es.concat(newNode));
+    setSelectedNode(newNode);
   };
   return (
     <div className="dndflow">
       <ReactFlowProvider>
+        <Sidebar />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
             elements={elements}
+            nodeTypes={nodeTypes}
             onConnect={onConnect}
             onElementsRemove={onElementsRemove}
             onElementClick = {onElementClick}
             onLoad={onLoad}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            onNodeDragStart = {onNodeDragStart}
           >
             <div className="updatenode__controls">
             <label>label:</label>
@@ -96,7 +115,6 @@ const GraphEditor = () => {
             <Controls />
           </ReactFlow>
         </div>
-        <Sidebar />
       </ReactFlowProvider>
     </div>
   );
