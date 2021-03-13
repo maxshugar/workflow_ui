@@ -1,17 +1,36 @@
-import React from 'react';
-import NavBar from 'react-bootstrap/NavBar';
-import Nav from 'react-bootstrap/Nav';
+import React, { Component } from 'react';
+import { MenuItems } from './menu_items';
+import './navbar.css';
+import {Button } from '../button';
 
-export const ReactNav = () => (
-  <NavBar expand="lg" bg="dark" variant="dark">
-    <NavBar.Brand href="/">Code Flow</NavBar.Brand>
-    <NavBar.Toggle aria-controls="basic-navbar-nav"/>
-    <NavBar.Collapse>
-      <Nav className="ml-auto">
-        <Nav.Item><Nav.Link href="/">Home</Nav.Link></Nav.Item>
-        <Nav.Item><Nav.Link href="/dashboard">Dashboard</Nav.Link></Nav.Item>
-        <Nav.Item><Nav.Link href="/editor">Editor</Nav.Link></Nav.Item>
-      </Nav>
-    </NavBar.Collapse>
-  </NavBar>
-)
+class NavBar extends Component{
+  state = { clicked: false }
+  handleClick = () => {
+    this.setState({clicked: !this.state.clicked});
+  }
+
+  render(){
+    return(
+      <nav className="NavBarItems">
+        <h1 className="NavBar-logo">React <i className="fab fa-react"></i></h1>
+        <div className="menu-icon" onClick={this.handleClick}>
+          <i className={this.state.clicked ? 'fas fa-times' : 'fas fa-bars'}></i>
+        </div>
+        <ul className={this.state.clicked ? 'nav-menu active' : 'nav-menu'}>
+          {MenuItems.map((item, index) => {
+            return(
+              <li key={index}>
+                <a className={item.cName} href={item.url}>
+                  {item.title}
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+        <Button>Sign Up</Button>
+      </nav>
+    )
+  }
+}
+
+export default NavBar;

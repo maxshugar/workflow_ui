@@ -1,14 +1,14 @@
 import React, { memo } from 'react';
 import { Handle } from 'react-flow-renderer';
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+// import Container from 'react-bootstrap/Container';
+// import Col from 'react-bootstrap/Col';
+// import Row from 'react-bootstrap/Row';
 
 export default memo(({ data }) => {
   return (
     <>
       
-      <Container style={{padding: "10px"}}>
+      {/* <Container style={{padding: "10px"}}>
       <Handle
         type="target"
         position="left"
@@ -36,7 +36,7 @@ export default memo(({ data }) => {
             style={{width: "50%", textAlign: "center"}}
             />
           </Row>
-      </Container>
+      </Container> */}
     </>
   );
 });

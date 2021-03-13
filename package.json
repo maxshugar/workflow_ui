@@ -10,7 +10,6 @@
     "bootstrap": "^4.5.3",
     "react": "^17.0.1",
     "react-ace": "^9.2.1",
-    "react-bootstrap": "^1.4.3",
     "react-digraph": "6.4.1",
     "react-dom": "^17.0.1",
     "react-flow-renderer": "^8.3.6",
