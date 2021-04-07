@@ -1,36 +1,17 @@
-import React, { Component } from 'react';
-import { MenuItems } from './menu_items';
-import './navbar.css';
-import {Button } from '../button';
+import React from 'react';
+import { Navbar,Nav,NavDropdown,Form,FormControl,Button } from 'react-bootstrap'
 
-class NavBar extends Component{
-  state = { clicked: false }
-  handleClick = () => {
-    this.setState({clicked: !this.state.clicked});
-  }
+export const NavBar = () => 
+ (
+    <Navbar bg="light" expand="lg">
+        <Navbar.Brand href="#home">WorkFlow Environment</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+                <Nav.Link href="/">Home</Nav.Link>
+                <Nav.Link href="/docs">Docs</Nav.Link>
+            </Nav>
+        </Navbar.Collapse>
+    </Navbar>
+);
 
-  render(){
-    return(
-      <nav className="NavBarItems">
-        <h1 className="NavBar-logo">React <i className="fab fa-react"></i></h1>
-        <div className="menu-icon" onClick={this.handleClick}>
-          <i className={this.state.clicked ? 'fas fa-times' : 'fas fa-bars'}></i>
-        </div>
-        <ul className={this.state.clicked ? 'nav-menu active' : 'nav-menu'}>
-          {MenuItems.map((item, index) => {
-            return(
-              <li key={index}>
-                <a className={item.cName} href={item.url}>
-                  {item.title}
-                </a>
-              </li>
-            )
-          })}
-        </ul>
-        <Button>Sign Up</Button>
-      </nav>
-    )
-  }
-}
-
-export default NavBar;
