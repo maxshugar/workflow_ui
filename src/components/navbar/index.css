@@ -1,0 +1,15 @@
+.navbar{
+    height: 60px;
+}
+
+.nav-link {
+    font-family: 'croma_sans_medium';
+    color: #1c1e21 !important;
+    margin-right: 20px;
+    font-size: 17px;
+}
+
+.navbar-brand {
+    font-family: 'croma_sans_bold';
+    color: #1c1e21 !important;
+}

@@ -1,0 +1,11 @@
+.hero_text>b {
+    color: #25c2a0;
+    font-family: 'myriad_pro_bold';
+}
+
+.hero_text{
+    color: rgb(255, 255, 255);
+    font-family: 'myriad_pro_bold';
+    font-size: 60px !important;
+    margin-bottom: '50px';
+}
