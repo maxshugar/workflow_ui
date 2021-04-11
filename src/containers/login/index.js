@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import './index.css';
 
@@ -12,6 +12,12 @@ export const Login = (props) => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
+
+  // if (this.props.isLoggedIn) {
+  //     return <Redirect to='/'/>;
+  // }
+
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

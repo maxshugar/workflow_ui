@@ -11,8 +11,8 @@ export const NavBar = () => {
 
 
     const handleLogOut = () => {
-        
         dispatch(logout());
+        window.location = "/";
     }
 
     return (
@@ -39,7 +39,7 @@ export const NavBar = () => {
                     { user ? 
                     <>
                         <Link to="/projects" className="nav-link">Projects</Link>
-                        <Link to="/" className="nav-link" onClick={handleLogOut}>Logout</Link> </> :
+                        <Nav.Link className="nav-link" onClick={handleLogOut}>Logout</Nav.Link> </> :
                         <Link to="/login" className="nav-link">Login</Link>
                     }
                 </Nav>
