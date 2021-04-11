@@ -1,29 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './app.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import PrivateRoute from './private_route';
+import {AuthContext} from "./context/auth";
 import {Home} from './containers/home';
 import {Docs} from './containers/docs';
 import {NavBar} from './components/navbar'
+import {Projects} from './containers/projects';
+import {Login} from './containers/login';
+
+import './app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
 
+  const existingTokens = JSON.parse(localStorage.getItem("tokens"));
+  const [authTokens, setAuthTokens] = useState(existingTokens);
+  
+  const setTokens = (data) => {
+    localStorage.setItem("tokens", JSON.stringify(data));
+    setAuthTokens(data);
+  }
+
   return (
-    // <React.Fragment>
-    //   <NavBar/>
-    //   <Editor/>
-    // </React.Fragment>
-    
-    <React.Fragment>
-      <NavBar/>
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Home}/>
-          <Route exact path="/docs" component={Docs}/>
-        </Switch>
-      </Router>
-    </React.Fragment>
+      <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+        <React.Fragment>
+          <Router>
+            <NavBar/>
+            <Switch>
+              <Route path="/" exact component={Home}/>
+              <Route path="/docs" component={Docs}/>
+              <Route path="/login" component={Login}/>
+              <PrivateRoute path="/projects" component={Projects}/>
+            </Switch>
+          </Router>
+        </React.Fragment>
+      </AuthContext.Provider>
   );
 }
 

@@ -4,4 +4,4 @@ Welcome to the workflow development environment, designed by developers, for dev
 
 ## Purpose
 
-The purpose of this system is to enable developers to collaboratively write automated product tests in various scripting languages, model the sequence of scripts and deploy directly to machines situated at the edge.
+The purpose of this system is to enable developers to collaboratively write automated product tests in various scripting languages, model the sequence of test scripts and deploy directly to machines situated at the edge.
