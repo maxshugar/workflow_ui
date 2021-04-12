@@ -13,6 +13,7 @@ import {Projects} from '../../containers/projects';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Register } from '../../containers/register';
 
 export const App = () => {
 
@@ -34,6 +35,7 @@ export const App = () => {
           <Route path="/" exact component={Home}/>
           <Route path="/docs" component={Docs}/>
           <Route path="/login" component={Login}/>
+          <Route path="/register" component={Register}/>
           <PrivateRoute path="/projects" component={Projects}/>
           <Redirect from="*" to="/" />
         </Switch>

@@ -34,7 +34,7 @@ export const Home = () => {
               </Col>
             </Row>
           </Col>
-        </Row>
+        </Row> 
       </Container>
       <Container style={{ marginTop: '30px' }}>
         <Row>

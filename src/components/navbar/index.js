@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,18 +8,21 @@ import { useHistory } from "react-router-dom";
 
 import './index.css';
 
-import { logout, selectUser } from '../../features/user_slice';
+import { userActions } from '../../_actions';
 
 export const NavBar = () => {
 
-    const [expanded, setExpanded] = useState(false);
-    const history = useHistory();
-
-    const user = useSelector(selectUser);
+    const user = useSelector(state => state.authentication.user);
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(userActions.getAll());
+    }, []);
+
+    const history = useHistory();
+
     const handleLogOut = () => {
-        dispatch(logout());
+        dispatch(userActions.logout());
         history.push("/");
     }
 
@@ -46,14 +49,14 @@ export const NavBar = () => {
                     <Link to="/docs" className="nav-link">
                         Docs
                     </Link>
-                    <NavDropdown expanded={expanded} alignRight title={navDropdownTitle} id="collasible-nav-dropdown">
+                    <NavDropdown alignRight title={navDropdownTitle} id="collasible-nav-dropdown">
                         { user ? 
                             <>
-                                <Link className="dropdown-item" to="/projects">Your projects</Link>
+                                <Link to="/projects" className="dropdown-item" >Your projects</Link>
                                 <NavDropdown.Divider />
-                                <Link className="dropdown-item" onClick={handleLogOut}>Sign out</Link>
+                                <NavDropdown.Item onClick={handleLogOut}>Sign out</NavDropdown.Item>
                             </> : 
-                                <Link to="/login" className="dropdown-item" onClick={() => setExpanded(!expanded)} >Login</Link>
+                                <Link to="/login" className="dropdown-item" >Login</Link>
                         }
                     </NavDropdown>
                 </Nav>

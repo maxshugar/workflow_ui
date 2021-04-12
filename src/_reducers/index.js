@@ -1,4 +1,4 @@
-  import { combineReducers } from 'redux';
+import { combineReducers } from 'redux';
 
 import { authentication } from './authentication_reducer';
 import { registration } from './registration_reducer';
