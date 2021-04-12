@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
-import { Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { history } from './_helpers';
-import { PrivateRoute } from './_components';
-import { alertActions } from './_actions';
-import {NavBar} from './components/navbar'
-import {Home} from './containers/home';
-import {Docs} from './containers/docs';
-import {Login} from './containers/login';
-import {Projects} from './containers/projects';
+import { history } from '../../_helpers';
+import { PrivateRoute } from '../private_route';
+import { alertActions } from '../../_actions';
+import {NavBar} from '../../components/navbar'
+import {Home} from '../../containers/home';
+import {Docs} from '../../containers/docs';
+import {Login} from '../../containers/login';
+import {Projects} from '../../containers/projects';
 
-import './app.css';
+import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function App() {
+export const App = () => {
 
   const alert = useSelector(state => state.alert);
     const dispatch = useDispatch();
@@ -41,6 +41,4 @@ function App() {
     </React.Fragment>
   );
 }
-
-export default App;
  
