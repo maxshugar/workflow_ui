@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { history } from '../../_helpers';
@@ -18,18 +18,17 @@ import { Register } from '../../containers/register';
 export const App = () => {
 
   const alert = useSelector(state => state.alert);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        history.listen((location, action) => {
-            // clear alert on location change
-            dispatch(alertActions.clear());
-        }); 
-    }, []);
+  useEffect(() => {
+      history.listen((location, action) => {
+          // clear alert on location change
+          dispatch(alertActions.clear());
+      }); 
+  }, []);
 
   return (
-    <React.Fragment>
-      <Router>
+      <React.Fragment>
         <NavBar/>
         <Switch>
           <Route path="/" exact component={Home}/>
@@ -39,8 +38,7 @@ export const App = () => {
           <PrivateRoute path="/projects" component={Projects}/>
           <Redirect from="*" to="/" />
         </Switch>
-      </Router>
-    </React.Fragment>
+      </React.Fragment>
   );
 }
  

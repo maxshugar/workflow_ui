@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { userActions } from '../../_actions';
+import { history } from '../../_helpers';
 
 export const Login = () => {
     const [inputs, setInputs] = useState({
@@ -31,7 +32,7 @@ export const Login = () => {
         setSubmitted(true);
         if (username && password) {
             // get return url from location state or default to home page
-            const { from } = location.state || { from: { pathname: "/" } };
+            const { from } = location.state || { from: { pathname: "/projects" } };
             dispatch(userActions.login(username, password, from));
         }
     }

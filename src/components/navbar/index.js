@@ -4,22 +4,19 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from "react-router-dom";
 
+import { history } from '../../_helpers';
 import './index.css';
-
 import { userActions } from '../../_actions';
 
 export const NavBar = () => {
-
+    
     const user = useSelector(state => state.authentication.user);
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(userActions.getAll());
     }, []);
-
-    const history = useHistory();
 
     const handleLogOut = () => {
         dispatch(userActions.logout());
