@@ -14,9 +14,9 @@ export const NavBar = () => {
     const user = useSelector(state => state.authentication.user);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(userActions.getAll());
-    }, []);
+    // useEffect(() => {
+    //     dispatch(userActions.getAll());
+    // }, []);
 
     const handleLogOut = () => {
         dispatch(userActions.logout());

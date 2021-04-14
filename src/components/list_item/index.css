@@ -1,7 +1,13 @@
 li{
     list-style: none;
-    margin: .5rem 0;
+    font-family: 'myriad_pro_bold';
 }
+
+li:hover{
+    cursor: pointer;
+}
+
+
 
 html, body {
     height:100%;

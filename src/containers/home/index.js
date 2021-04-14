@@ -59,7 +59,6 @@ export const Home = () => {
               className="my-2"
             />
             <p style={{ fontFamily: "croma_sans_bold", fontSize: "1.25rem" }}>Rapid Deployment</p>
-
             <p>Deploy your work directly to the production floor, in the click of a button.</p>
           </Col>
 

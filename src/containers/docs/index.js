@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown'
 
 export const Docs = () => {
 
+    const [selectedItem, setSelectedItem] = useState(undefined);
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [selectedMarkdown, setSelectedMarkdown] = useState(undefined);
 
@@ -21,19 +22,19 @@ export const Docs = () => {
 
     const getMarkdown = async (index) => {
         const file = require(`./markdown/${contents[index].path}`);
-        const res = await fetch(file.default);
+        const res = await fetch(file.default, {});
         return res.text();
     }
 
     const makeListItems = () => {
         return(
-            <ul> 
+            <ListGroup className='list-group-flush'> 
                 {
                     contents.map((content, index) => {
-                        return <ListItem key={index} onClick={() => setSelectedItemIndex(index)} text={content.name} />
+                        return <ListItem key={index} isActive={selectedItemIndex === index} onClick={() => setSelectedItemIndex(index)} text={content.name} />
                     })
                 }
-            </ul>
+            </ListGroup>
         );
     }
 
