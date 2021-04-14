@@ -1,29 +1,25 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, NavItem } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faListAlt, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { history } from '../../_helpers';
 import './index.css';
 import { userActions } from '../../_actions';
 
-export const NavBar = () => {
-    
+export const NavBar = (props) => {
+    console.log(props);
     const user = useSelector(state => state.authentication.user);
     const dispatch = useDispatch();
-
-    // useEffect(() => {
-    //     dispatch(userActions.getAll());
-    // }, []);
 
     const handleLogOut = () => {
         dispatch(userActions.logout());
         history.push("/");
     }
 
-    const navDropdownTitle = (<FontAwesomeIcon icon={faUserCircle} className="d-inline-block align-middle" />);
+    const accountNavDropdownTitle = (<FontAwesomeIcon icon={faUserCircle} className="d-inline-block align-middle" />);
 
     return (
         <Navbar bg="light" expand="lg">
@@ -46,14 +42,24 @@ export const NavBar = () => {
                     <Link to="/docs" className="nav-link">
                         Docs
                     </Link>
-                    <NavDropdown alignRight title={navDropdownTitle} id="collasible-nav-dropdown">
+
+                    <NavDropdown alignRight title={accountNavDropdownTitle} id="collasible-nav-dropdown">
                         { user ? 
                             <>
-                                <Link to="/projects" className="dropdown-item" >Your projects</Link>
+                                <Link to="/projects" className="dropdown-item">
+                                    <FontAwesomeIcon icon={faListAlt} className="d-inline-block align-middle mr-2" /> 
+                                    Projects
+                                </Link>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item onClick={handleLogOut}>Sign out</NavDropdown.Item>
+                                <NavDropdown.Item onClick={handleLogOut}>
+                                    <FontAwesomeIcon icon={faSignOutAlt} className="d-inline-block align-middle mr-2" /> 
+                                    Sign out
+                                </NavDropdown.Item>
                             </> : 
-                                <Link to="/login" className="dropdown-item" >Login</Link>
+                                <Link to="/login" className="dropdown-item">
+                                    <FontAwesomeIcon icon={faSignInAlt} className="d-inline-block align-middle mr-2" /> 
+                                    Sign in
+                                </Link>
                         }
                     </NavDropdown>
                 </Nav>

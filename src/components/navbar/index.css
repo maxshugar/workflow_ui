@@ -13,3 +13,7 @@
     font-family: 'croma_sans_bold';
     color: #1c1e21 !important;
 }
+
+.action-btn:hover{
+    cursor: pointer;
+}
