@@ -5,7 +5,7 @@ import ReactFlow, {
   removeElements,
   Controls
 } from 'react-flow-renderer';
-import Sidebar from '../sidebar';
+import { SideBar } from './sidebar';
 import './dnd.css';
 import taskNode from './task_node';
 const initialElements = [
@@ -91,7 +91,7 @@ const GraphEditor = ({selectedNode, setSelectedNode}) => {
   return (
     <div className="dndflow">
       <ReactFlowProvider>
-        <Sidebar />
+        <SideBar />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
             elements={elements}

@@ -1,13 +1,12 @@
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem('users')) || [];
-    
+let projects = JSON.parse(localStorage.getItem('projects')) || [];
+
 export function configureFakeBackend() {
     let realFetch = window.fetch;
     window.fetch = function (url, opts) {
-        console.log(opts);
         const { method, headers } = opts;
         const body = opts.body && JSON.parse(opts.body);
-
         return new Promise((resolve, reject) => {
             // wrap in timeout to simulate server api call
             setTimeout(handleRoute, 500);
@@ -22,13 +21,24 @@ export function configureFakeBackend() {
                         return getUsers();
                     case url.match(/\/users\/\d+$/) && method === 'DELETE':
                         return deleteUser();
+                    case url.endsWith('/projects') && method === 'GET':
+                        return getProjects();
+                    case url.match(/\/projects\/\d+$/) && method === 'GET':
+                        return getProject();
+                    case url.match(/\/projects\/\d+$/) && method === 'PUT':
+                        return updateProject();
+                    case url.endsWith('/projects') && method === 'POST':
+                        return createProject();
+                    case url.match(/\/projects\/\d+$/) && method === 'DELETE':
+                        return deleteProject();
+
                     default:
                         // pass through any requests not handled above
                         return realFetch(url, opts)
                             .then(response => resolve(response))
                             .catch(error => reject(error));
                 }
-            }  
+            }
 
             // route functions
 
@@ -47,11 +57,11 @@ export function configureFakeBackend() {
 
             function register() {
                 const user = body;
-    
+
                 if (users.find(x => x.username === user.username)) {
                     return error(`Username  ${user.username} is already taken`);
                 }
-    
+
                 // assign user id and a few other properties then save
                 user.id = users.length ? Math.max(...users.map(x => x.id)) + 1 : 1;
                 users.push(user);
@@ -59,16 +69,61 @@ export function configureFakeBackend() {
 
                 return ok();
             }
-    
+
             function getUsers() {
                 if (!isLoggedIn()) return unauthorized();
 
                 return ok(users);
             }
-    
+
+            function getProjects(){
+                if (!isLoggedIn()) return unauthorized();
+
+                return ok(projects);
+            }
+
+            function getProject(){
+                const id = idFromUrl();
+                if (!isLoggedIn()) return unauthorized();
+                for(let i = 0; i < projects.length; i++){
+                    let project = projects[i];
+                    if(project.id === id)
+                        return ok(project);
+                }
+                return error(`Project with id ${id} not found`);
+            }
+
+            function createProject() {
+
+                console.log("Create project called!");
+
+                const project = body;
+                if (projects.find(x => x.name === project.name)) {
+                    return error(`Project with name "${project.name}" is already taken.`);
+                }
+                // assign project id and a few other properties then save
+                project.id = projects.length ? Math.max(...projects.map(x => x.id)) + 1 : 1;
+                projects.push(project);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                return ok();
+            }
+
+            function deleteProject() {
+                if (!isLoggedIn()) return unauthorized();
+                projects = projects.filter(x => x.id !== idFromUrl());
+                localStorage.setItem('projects', JSON.stringify(projects));
+                return ok();
+            }
+
+            function updateProject(project) {
+                if (!isLoggedIn()) return unauthorized();
+                projects[idFromUrl()] = project;
+                localStorage.setItem('projects', JSON.stringify(projects));
+                return ok();
+            }
+
             function deleteUser() {
                 if (!isLoggedIn()) return unauthorized();
-    
                 users = users.filter(x => x.id !== idFromUrl());
                 localStorage.setItem('users', JSON.stringify(users));
                 return ok();
@@ -91,7 +146,7 @@ export function configureFakeBackend() {
             function isLoggedIn() {
                 return headers['Authorization'] === 'Bearer fake-jwt-token';
             }
-    
+
             function idFromUrl() {
                 const urlParts = url.split('/');
                 return parseInt(urlParts[urlParts.length - 1]);

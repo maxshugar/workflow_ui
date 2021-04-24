@@ -1,0 +1,30 @@
+.floating_menu{
+	position: fixed;
+	bottom: 30px;
+	right: 40px;
+	align-items: center;
+	text-align:center;
+}
+
+.icon{
+	color: #358b41;
+	font-size: 3em;
+	transition: all .2s ease-in-out;
+}
+
+.icon:hover{
+	color: #21b86d;
+	cursor: pointer;
+	transform: scale(1.1, 1.1);
+	-ms-transform: scale(1.1, 1.1);
+	-webkit-transform: scale(1.1, 1.1);
+}
+
+.label{
+	margin-top: 10px;
+	font-size: 1.3em;
+	font-family: "croma_sans_medium";
+	background: linear-gradient(to right, #26947c 0%, #53c98e 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}

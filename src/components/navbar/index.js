@@ -22,7 +22,7 @@ export const NavBar = (props) => {
     const accountNavDropdownTitle = (<FontAwesomeIcon icon={faUserCircle} className="d-inline-block align-middle" />);
 
     return (
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="light" expand="lg" className="sticky_nav">
             <Navbar.Brand href="/">
                 WorkFlow{' '}
                 <img

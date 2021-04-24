@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import './index.css';
+import styles from './index.module.css';
 
 export const Home = () => {
 
@@ -11,7 +11,7 @@ export const Home = () => {
           <Col>
             <Row align="center">
               <Col sm={8}>
-                <p className="hero_text">
+                <p className={styles.hero_text}>
                   Test products <b>quickly</b>,<br />
               automate <b>deployment</b> and<br />
                   <b>collaborate</b> on projects

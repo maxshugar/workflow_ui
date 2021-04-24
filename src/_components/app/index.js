@@ -11,6 +11,7 @@ import {Docs} from '../../containers/docs';
 import {Login} from '../../containers/login';
 import {Projects} from '../../containers/projects';
 import { NewProject } from '../../containers/projects/new';
+import { Project } from '../../_components/project';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -41,6 +42,7 @@ export const App = () => {
           <Route path="/register" component={Register}/>
           <PrivateRoute path="/projects" exact component={Projects}/>
           <PrivateRoute path="/projects/new" component={NewProject} />
+          <PrivateRoute path="/projects/:id" component={Project} />
           <Redirect from="*" to="/" />
         </Switch>
       </React.Fragment>

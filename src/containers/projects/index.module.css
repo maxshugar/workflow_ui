@@ -1,3 +1,19 @@
 .headingFont{
     font-family: 'myriad_pro_bold';
 }
+
+.project_list_item{
+    cursor: pointer;
+    text-decoration:none; 
+    color:rgb(0, 0, 0);
+    -webkit-transition: color.3s linear,border.3s linear; 
+    -moz-transition: color  .3s linear,border.3s linear;
+    -ms-transition: color  .3s linear,border.3s linear; 
+    -o-transition: color .3s linear,border.3s linear; 
+    transition: color .3s linear,border.3s linear;
+}
+
+.project_list_item:hover{
+    color:rgb(37, 143, 90); 
+    border-bottom:solid;
+}

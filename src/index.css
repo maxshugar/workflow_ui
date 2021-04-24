@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll;
+}
+
 @font-face {
     font-family: "myriad_pro_bold";
     src: local("myriad_pro_bold"),

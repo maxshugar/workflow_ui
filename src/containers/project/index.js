@@ -6,7 +6,7 @@ import style from './index.module.css';
 
 export const Projects = () =>
 (
-    <Container  style={{ marginTop: '100px' }}>
+    <Container>
         Project
     </Container>
 );
