@@ -8,7 +8,6 @@ import { ConnectionMode } from "react-flow-renderer";
 // Render editor
 export const CodeEditor = ({selectedNode}) => {
   const onChange = (newValue) => {
-    console.log("change", newValue);
     selectedNode.data.code = newValue;
   }
 

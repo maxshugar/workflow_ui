@@ -10,7 +10,6 @@ export function configureFakeBackend() {
         return new Promise((resolve, reject) => {
             // wrap in timeout to simulate server api call
             setTimeout(handleRoute, 500);
-
             function handleRoute() {
                 switch (true) {
                     case url.endsWith('/users/authenticate') && method === 'POST':
@@ -31,6 +30,8 @@ export function configureFakeBackend() {
                         return createProject();
                     case url.match(/\/projects\/\d+$/) && method === 'DELETE':
                         return deleteProject();
+                    case url.endsWith('/tasks') && method === 'POST':
+                        return runTask();
 
                     default:
                         // pass through any requests not handled above
@@ -52,6 +53,30 @@ export function configureFakeBackend() {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     token: 'fake-jwt-token'
+                });
+            }
+
+            function runTask(){
+                console.log({body});
+                return realFetch('http://localhost:4000/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: "hello world" })
+                }).then(handleResponse);
+            }
+            
+            function handleResponse(response) {
+                return response.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.statusText;
+                        return Promise.reject(error);
+                    }
+
+                    return data;
                 });
             }
 
