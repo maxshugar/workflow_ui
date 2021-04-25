@@ -63,7 +63,7 @@ export function configureFakeBackend() {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
-                    },
+                    },    
                     body: JSON.stringify({ code: "hello world" })
                 }).then(handleResponse);
             }
