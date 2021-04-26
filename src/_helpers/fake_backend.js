@@ -7,6 +7,7 @@ export function configureFakeBackend() {
     window.fetch = function (url, opts) {
         const { method, headers } = opts;
         const body = opts.body && JSON.parse(opts.body);
+        console.log({body})
         return new Promise((resolve, reject) => {
             // wrap in timeout to simulate server api call
             setTimeout(handleRoute, 500);
@@ -56,16 +57,19 @@ export function configureFakeBackend() {
                 });
             }
 
-            function runTask(){
-                console.log({body});
-                return realFetch('http://localhost:4000/execute', {
+            async function runTask(){
+                console.log(body);
+                const response = await realFetch('http://localhost:4000/execute', {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },    
-                    body: JSON.stringify({ code: "hello world" })
-                }).then(handleResponse);
+                    body: JSON.stringify(body)
+                });
+                const responseTxt = await response.text();
+                const data = responseTxt && JSON.parse(responseTxt);
+                console.log({data})
+                return data;
             }
             
             function handleResponse(response) {
@@ -73,7 +77,7 @@ export function configureFakeBackend() {
                     const data = text && JSON.parse(text);
                     if (!response.ok) {
                         const error = (data && data.message) || response.statusText;
-                        return Promise.reject(error);
+                        return (error);
                     }
 
                     return data;

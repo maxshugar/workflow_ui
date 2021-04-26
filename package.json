@@ -15,7 +15,9 @@
     "history": "^4.10.1",
     "react": "^17.0.1",
     "react-ace": "^9.2.1",
+    "react-animated-term": "^2.0.0",
     "react-bootstrap": "^1.5.2",
+    "react-console-emulator": "^5.0.1",
     "react-digraph": "6.4.1",
     "react-dom": "^17.0.1",
     "react-flow-renderer": "^8.3.6",
@@ -27,6 +29,7 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "terminal-in-react": "^4.3.1",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

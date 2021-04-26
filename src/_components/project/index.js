@@ -15,7 +15,9 @@ export const Project = () => {
     let { id } = useParams();
 
     const handleRun = () => {
-        dispatch(taskActions.run(selectedNode.data.code));
+
+        const data = { language: 'js', blocking: false, code: selectedNode.data.code };
+        dispatch(taskActions.run(JSON.stringify(data)));
     }
 
     const dispatch = useDispatch()

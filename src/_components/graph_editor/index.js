@@ -71,7 +71,7 @@ const GraphEditor = ({selectedNode, setSelectedNode}) => {
     event.dataTransfer.dropEffect = 'move';
     
   };
-  const onDrop = (event) => {
+  const onDrop = (event, test) => {
     event.preventDefault();
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
