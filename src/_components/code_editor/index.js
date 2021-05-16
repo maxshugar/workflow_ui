@@ -3,22 +3,25 @@ import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
-import { ConnectionMode } from "react-flow-renderer";
 
 // Render editor
-export const CodeEditor = ({selectedNode}) => {
-  const onChange = (newValue) => {
-    selectedNode.data.code = newValue;
-  }
+export const CodeEditor = ({ selectedNode, setSelectedNode }) => {
 
-    return( 
+  const onChange = (newValue) => {
+    let selectedNodeCopy = {...selectedNode};
+    selectedNodeCopy.data.code = newValue;
+    setSelectedNode(selectedNodeCopy);
+  }; 
+
+  return (
     <AceEditor
-        mode="javascript"
-        theme="github"
-        onChange={onChange}
-        name="UNIQUE_ID_OF_DIV"
-        editorProps={{ $blockScrolling: true }}
-        value={selectedNode.data.code || "default"}
+      mode="javascript"
+      theme="github"
+      onChange={onChange}
+      name="UNIQUE_ID_OF_DIV"
+      editorProps={{ $blockScrolling: true }}
+      value={selectedNode.data.code || ""}
+      style={{ border: '1px solid black', width: '100%' }}
     />
-    )
-}
+  );
+};

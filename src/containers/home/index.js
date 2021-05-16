@@ -10,14 +10,14 @@ export const Home = () => {
         <Row style={{ backgroundColor: '#2b3137', padding: '50px' }}>
           <Col>
             <Row align="center">
-              <Col sm={8}>
+              <Col sm={12}>
                 <p className={styles.hero_text}>
                   Test products <b>quickly</b>,<br />
               automate <b>deployment</b> and<br />
                   <b>collaborate</b> on projects
             </p>
               </Col>
-              <Col sm={4}>
+              {/* <Col sm={4}>
                 <img
                   src="/logo_old.png"
                   width="200"
@@ -26,7 +26,7 @@ export const Home = () => {
                   style={{ float: 'left', marginTop: '60px;' }}
                   alt="WorkFlow logo"
                 />
-              </Col>
+              </Col> */}
             </Row>
             <Row align="center">
               <Col>

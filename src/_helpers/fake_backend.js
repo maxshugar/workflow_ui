@@ -69,8 +69,11 @@ export function configureFakeBackend() {
                 const responseTxt = await response.text();
                 const data = responseTxt && JSON.parse(responseTxt);
                 console.log({data})
-                return data;
+                return ok(data);
             }
+
+            // Version 2: Delegate control to flow chart - OR, AND, Thresholds - really simple UI
+            // Debugging, set parameters for asumptions on element results. E.e, pretent mode 3 has passed and debug mode in isolation.
             
             function handleResponse(response) {
                 return response.text().then(text => {

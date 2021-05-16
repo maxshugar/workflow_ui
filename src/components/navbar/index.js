@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, NavItem } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle, faListAlt, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faListAlt, faSignInAlt, faSignOutAlt, faProcedures, faLaptopCode, faCodeBranch } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { history } from '../../_helpers';
@@ -24,14 +24,15 @@ export const NavBar = (props) => {
     return (
         <Navbar bg="light" expand="lg" className="sticky_nav">
             <Navbar.Brand href="/">
-                WorkFlow{' '}
-                <img
+                Process Engine{' '}
+                <FontAwesomeIcon icon={faCodeBranch} className="d-inline-block ml-2" /> 
+                {/* <img
                     src="/logo.png"
                     width="50"
                     height="50"
                     className="d-inline-block align-middle"
                     alt="WorkFlow logo"
-                />
+                /> */}
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

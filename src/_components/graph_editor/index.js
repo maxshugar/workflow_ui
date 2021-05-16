@@ -7,28 +7,38 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { SideBar } from './sidebar';
 import './dnd.css';
-import taskNode from './task_node';
+import { EndNode, ScriptNode, StartNode } from './node_types';
 const initialElements = [
   {
     id: '1',
-    type: 'input',
-    data: { label: 'input node' },
-    position: { x: 250, y: 5 },
+    type: 'StartNode',
+    data: { label: 'Start Sequence'},
+    position: { x: 250, y: 100 },
   },
   {
-    id: '2',
-    type: 'taskNode',
-    data: { label: 'task node', code: "this is a test" },
-    position: { x: 350, y: 5 },
+    data: {
+      label: "Script Node", code: ""
+    },
+    id: "2",
+    position: {x: 250, y: 200},
+    type: "ScriptNode"
   },
+  {
+    id: "reactflow__edge-1null-2null",
+    source: "1",
+    sourceHandle: null,
+    target: "2",
+    targetHandle: null
+  }
 ];
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const nodeTypes = {
-  taskNode
+  StartNode,
+  ScriptNode,
+  EndNode
 };
-
 
 const GraphEditor = ({selectedNode, setSelectedNode}) => {
   const reactFlowWrapper = useRef(null);
@@ -37,10 +47,17 @@ const GraphEditor = ({selectedNode, setSelectedNode}) => {
 
   //const [selectedNode, setSelectedNode] = useState({id: -1, data: {label: 'test'}});
 
-  const [selectedNodeName, setSelectedNodeName] = useState();
+  const [selectedNodeName, setSelectedNodeName] = useState(null);
 
 
-  const onElementClick= (evt, node) => setSelectedNode(node);
+  const onElementClick= (evt, node) => { 
+    
+    if(node.type === 'ScriptNode'){
+      console.log(node.type);
+      return setSelectedNode(node)
+    }
+    else return false;
+    };
 
   useEffect(() => setSelectedNodeName(selectedNode.data.label), [selectedNode]);
 
@@ -55,6 +72,7 @@ const GraphEditor = ({selectedNode, setSelectedNode}) => {
             label: selectedNodeName,
           };
         }
+        console.log(elements)
         return el;
       })
     );
@@ -83,7 +101,7 @@ const GraphEditor = ({selectedNode, setSelectedNode}) => {
       id: getId(),
       type,
       position,
-      data: { label: `${type} node` },
+      data: { label: `${type} node`, code: '' },
     };
     setElements((es) => es.concat(newNode));
     setSelectedNode(newNode);

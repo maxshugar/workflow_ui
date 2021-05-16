@@ -1,35 +1,38 @@
+import React, { useState, useEffect } from "react";
+import Terminal from "react-console-emulator";
 import styles from './index.module.css';
 
-import Terminal from 'react-animated-term'
-import 'react-animated-term/dist/react-animated-term.css'
+export const Console = ({consoleText}) => {
+  const terminal = React.createRef();
+  
+  const [isRunning, setIsRunning] = useState(false);
 
-export const Console = () => {
+  useEffect(() => {
+    if(consoleText != null){
+      const rootNode = terminal.current;
+      rootNode && rootNode.pushToStdout(consoleText);
+      //console.log('code', consoleText);
+      rootNode && rootNode.scrollToBottom()
+    }
+    
+  }, [consoleText])
 
-    const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-    const termLines = [
-    {
-        text: 'Process Engine',
-        cmd: true,
-        delay: 80
-    },
-    {
-        text: '✔ Loaded app',
-        cmd: false,
-        repeat: true,
-        repeatCount: 5,
-        frames: spinner.map(function (spinner) {
-        return {
-            text: spinner + ' Loading app',
-            delay: 10
-        }
-        })
-    },
-    ]
+  // Experimental syntax, requires Babel with the transform-class-properties plugin
+  // You may also define commands within render in case you don't have access to class field syntax
 
-    return(
-        <Terminal
-            lines={termLines}
-            interval={10}
-        />
-    );
-}
+  return (
+    <Terminal
+      className={styles.console}
+      ref={terminal} // Assign ref to the terminal here
+      welcomeMessage={[
+        "Process execution engine."
+      ]}
+        commands={{}}
+        readOnly
+        disabled={isRunning}
+        locked={isRunning}
+        noAutoScroll={true}
+    />
+  );
+
+};

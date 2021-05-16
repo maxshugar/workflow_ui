@@ -7,17 +7,14 @@ export const SideBar =  () => {
   return (
     <aside>
       <div className="description">You can drag these nodes to the pane on the right.</div>
-      <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>
-        Input Node
+      <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'StartNode')} draggable>
+        StartNode
       </div>
-      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-        Default Node
+      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'ScriptNode')} draggable>
+        ScriptNode
       </div>
-      <div className="dndnode taskNode" onDragStart={(event) => onDragStart(event, 'taskNode')} draggable>
-        Task Node
-      </div>
-      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'output')} draggable>
-        Output Node
+      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'EndNode')} draggable>
+        EndNode
       </div>
     </aside>
   );
