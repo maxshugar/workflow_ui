@@ -2,7 +2,7 @@ import React from 'react';
 import ReactFlow, { Handle } from 'react-flow-renderer';
 
 const customNodeStyles = {
-    background: '#9CA8B3',
+    background: 'blue',
     color: '#FFF',
     padding: 10,
 };
@@ -13,7 +13,7 @@ export const EndNode = ({ data }) => {
         <div>End Sequence</div>
         <Handle
           type="target"
-          position="top"
+          position="left"
           style={{ height: '10px', width: '10px' }}
         />
       </div>

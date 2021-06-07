@@ -2,7 +2,7 @@ import React from 'react';
 import ReactFlow, { Handle } from 'react-flow-renderer';
 
 const customNodeStyles = {
-    background: '#9CA8B3',
+    backgroundColor: 'blue',
     color: '#FFF',
     padding: 10,
 };
@@ -13,7 +13,7 @@ export const StartNode = ({ data }) => {
         <div>Start Sequence</div>
         <Handle
           type="source"
-          position="bottom"
+          position="right"
           style={{ height: '10px', width: '10px' }}
         />
       </div>

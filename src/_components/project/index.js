@@ -4,7 +4,7 @@ import './index.css';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { projectActions, taskActions } from '../../_actions';
-import { CodeEditor } from '../code_editor';
+import { CodeEditor} from '../code_editor';
 import GraphEditor from '../graph_editor';
 import { Console } from '../console';
 // import { io } from "socket.io-client";
@@ -12,7 +12,7 @@ import { Console } from '../console';
 
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient('http://localhost:8080');
+const socket = socketIOClient('http://localhost:8000');
 
 
 
@@ -21,7 +21,7 @@ export const Project = () => {
     useEffect(() => {
         
         socket.on("connect", data => {
-            console.log('Connected to socket!');
+            console.log('Connected to socket!'); 
         });
 
         socket.on('runResult', data => {
@@ -37,25 +37,36 @@ export const Project = () => {
 
     }, []);
 
-    const [selectedNode, setSelectedNode] = useState(
-        {data: {
-            label: "Script Node", code: ""
-        },
-        id: "2",
-        position: {x: 141.8125, y: 192},
-        type: "ScriptNode"
-    });
+    const [selectedNode, setSelectedNode] = useState( {
+        id: '1',
+        type: 'StartNode',
+        data: { label: 'Start Sequence'},
+        position: { x: 250, y: 100 },
+      }
+    );
 
     const [consoleText, setConsoleText] = useState();
 
     let { id } = useParams();
     
     const handleRun = () => {
-        const data = { language: 'js', blocking: false, code: selectedNode.data.code };
+        console.log(selectedNode.data)
+        const data = { language: 'js', script: selectedNode.data.script };
         setConsoleText(`Running ${selectedNode.data.label}, please wait..`);
-        socket.emit('runScript', data);
+        socket.emit('run', data);
         //dispatch(taskActions.run(JSON.stringify(data)));
         //console.log(selectedNode)
+    }
+
+    const handleDebug = () => {
+
+
+        const {script, breakpoints} = selectedNode.data;
+        console.log(breakpoints)
+        // socket.emit('debugScript', {
+        //     script,
+        //     breakpoints
+        // });
     }
 
     const dispatch = useDispatch();
@@ -90,9 +101,9 @@ export const Project = () => {
                     <Col>
                         <h3 style={{ display: 'inline-block' }} >Project Name: {project && project.name}</h3>
                         <div style={{ float: 'right' }} >
-                                <Button style={{ margin: '5px' }} onClick={() => handleRun()} disabled={!selectedNode.type === 'ScriptNode'}>Run Script</Button>
-                                <Button style={{ margin: '5px' }}>Debug Script</Button>
-                                <Button style={{ margin: '5px' }}>Run Sequence</Button>
+                                <Button style={{ margin: '5px' }} onClick={() => handleRun()} disabled={selectedNode.type !== 'ScriptNode'}>Run Script</Button>
+                                <Button style={{ margin: '5px' }} onClick={() => handleDebug()} disabled={selectedNode.type !== 'ScriptNode'}>Debug Script</Button>
+                                <Button style={{ margin: '5px' }} disabled={selectedNode.type !== 'ScriptNode'}>Run Sequence</Button>
                         </div>
                     </Col>
                 </Row>
