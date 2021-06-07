@@ -21,10 +21,11 @@ export const Project = () => {
     useEffect(() => {
         
         socket.on("connect", data => {
-            console.log('Connected to socket!'); 
+            setConsoleText('Connected to edge device.');
+            socket.emit('getState');
         });
 
-        socket.on('runResult', data => {
+        socket.on('data', data => {
             console.log({data});
             if(data.ok)
                 setConsoleText(data.res);
@@ -35,12 +36,29 @@ export const Project = () => {
                 setConsoleText(`Script exited with code ${data.exitCode}.`);
         });
 
+        // socket.on('PAUSED', data => {
+        //     console.log({data});
+        //     if(data.breakpoint)
+        //         setBreakpointHit(data.lineNumber)
+        // });
+
+        socket.on('state', state => {
+            console.log({state})
+            setDebuggerState(state);
+        })
+
     }, []);
+
+    const [debuggerState, setDebuggerState] = useState(null);
 
     const [selectedNode, setSelectedNode] = useState( {
         id: '1',
         type: 'StartNode',
-        data: { label: 'Start Sequence'},
+        data: { 
+            label: 'Start Sequence',
+            script: '',
+            breakpoints: []
+        },
         position: { x: 250, y: 100 },
       }
     );
@@ -48,26 +66,6 @@ export const Project = () => {
     const [consoleText, setConsoleText] = useState();
 
     let { id } = useParams();
-    
-    const handleRun = () => {
-        console.log(selectedNode.data)
-        const data = { language: 'js', script: selectedNode.data.script };
-        setConsoleText(`Running ${selectedNode.data.label}, please wait..`);
-        socket.emit('run', data);
-        //dispatch(taskActions.run(JSON.stringify(data)));
-        //console.log(selectedNode)
-    }
-
-    const handleDebug = () => {
-
-
-        const {script, breakpoints} = selectedNode.data;
-        console.log(breakpoints)
-        // socket.emit('debugScript', {
-        //     script,
-        //     breakpoints
-        // });
-    }
 
     const dispatch = useDispatch();
     const project = useSelector(state => state.projects.item);
@@ -101,15 +99,13 @@ export const Project = () => {
                     <Col>
                         <h3 style={{ display: 'inline-block' }} >Project Name: {project && project.name}</h3>
                         <div style={{ float: 'right' }} >
-                                <Button style={{ margin: '5px' }} onClick={() => handleRun()} disabled={selectedNode.type !== 'ScriptNode'}>Run Script</Button>
-                                <Button style={{ margin: '5px' }} onClick={() => handleDebug()} disabled={selectedNode.type !== 'ScriptNode'}>Debug Script</Button>
                                 <Button style={{ margin: '5px' }} disabled={selectedNode.type !== 'ScriptNode'}>Run Sequence</Button>
                         </div>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <CodeEditor selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
+                        <CodeEditor debuggerState={debuggerState} setConsoleText={setConsoleText} socket={socket} selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
                     </Col>
                     <Col>
                         <GraphEditor selectedNode={selectedNode} setSelectedNode={setSelectedNode} />

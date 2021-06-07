@@ -54,7 +54,11 @@ const initialElements = [
   {
     id: '1',
     type: 'StartNode',
-    data: { label: 'Start Sequence'},
+    data: { 
+      label: 'Start Sequence',
+      script: '',
+      breakpoints: []
+    },
     position: { x: 250, y: 100 },
   },
   {
@@ -77,7 +81,11 @@ const initialElements = [
   {
     id: '3',
     type: 'EndNode',
-    data: { label: 'End Sequence'},
+    data: { 
+      label: 'End Sequence',
+      script: '',
+      breakpoints: []
+    },
     position: { x: 250, y: 300 },
   },
   {
