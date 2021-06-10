@@ -22,28 +22,18 @@ export const Project = () => {
         
         socket = socketIOClient('http://localhost:8000');
         socket.on("connect", data => {
-            prettifyConsoleText('Connected to edge device.');
+            prettifyConsoleText('Connected to edge device.', "SUCCESS");
         });
 
         socket.on('data', data => {
-            console.log({data});
-            if(data.ok)
-                setConsoleText(data.res);
-            else{
-                setConsoleText(data.err);
-            }
-            if(data.hasOwnProperty('exitCode'))
-                setConsoleText(`Script exited with code ${data.exitCode}.`);
+            setConsoleText({text: data});
         });
 
-        // socket.on('PAUSED', data => {
-        //     console.log({data});
-        //     if(data.breakpoint)
-        //         setBreakpointHit(data.lineNumber)
-        // });
+        socket.on('error', err => {
+            setConsoleText({text: err,  style:{color: 'red'}});
+        });
 
         socket.on('state', state => {
-            console.log({state})
             setDebuggerState(state);
         })
 
@@ -66,7 +56,13 @@ export const Project = () => {
     const user = useSelector(state => state.authentication.user);
     
     const prettifyConsoleText = (text, type) => {
-        setConsoleText(`<${user.username}/> ${text}`);
+        const formattedText = `[${user.username}] ${text}`;
+        if(type == 'INFO')
+            setConsoleText({text: formattedText, style: {color: 'aqua'}});
+        else if(type == 'SUCCESS')
+            setConsoleText({text: formattedText, style: {color: 'green'}});
+        else
+            setConsoleText({text: formattedText});
     }
 
     const [consoleText, setConsoleText] = useState();

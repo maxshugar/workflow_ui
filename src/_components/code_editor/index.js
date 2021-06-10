@@ -43,7 +43,7 @@ export const CodeEditor = (props) => {
     socket.emit("run", selectedNode.data);
   };
   const handleDebug = () => {
-    prettifyConsoleText(`Debugging ${selectedNode.data.label}, please wait..`);
+    //prettifyConsoleText(`Debugging ${selectedNode.data.label}, please wait..`);
     socket.emit("debug", selectedNode.data);
   };
   const handleContinue = () => socket.emit("continue", selectedNode.data);
@@ -55,7 +55,6 @@ export const CodeEditor = (props) => {
   }, [socket]);
 
   useEffect(() => {
-    console.log(markers);
     for (let i = 0; i < markers.length; i++) {
       markers[i].clear();
     }
@@ -71,7 +70,7 @@ export const CodeEditor = (props) => {
   };
 
   useEffect(() => {
-    debuggerStateRef.current = debuggerState;
+    let prevState = debuggerStateRef.current;
     console.log(debuggerState);
     if (debuggerState == null) return;
     switch (debuggerState.state) {
@@ -80,17 +79,14 @@ export const CodeEditor = (props) => {
         break;
       case "STATE_DEBUGGING":
         setIsDebugging(true);
-        prettifyConsoleText(
-          `Debugging ${selectedNode.data.label}, please wait..`
-        );
+        prettifyConsoleText(`Debugging ${selectedNode.data.label}, please wait..`);
         break;
       case "STATE_COMPLETE":
         setIsRunning(false);
         setIsDebugging(false);
-        prettifyConsoleText(`${selectedNode.data.label} complete :)`);
+        prettifyConsoleText(`${selectedNode.data.label} complete :)`, "SUCCESS");
         setClearMarkers(true);
-        socket.emit("getState");
-        break;
+        break; 
       case "STATE_PAUSED":
         if (debuggerState.breakpoint) {
           markLine(debuggerState.lineNumber);
@@ -103,7 +99,11 @@ export const CodeEditor = (props) => {
         socket.emit("getState");
         break;
       case "STATE_IDLE":
-        prettifyConsoleText(`Debugger ready.`);
+        if(prevState){
+          if(prevState.state == "STATE_BREAKPOINT_ADDED" || prevState.state == "STATE_BREAKPOINT_REMOVED")
+            break;
+        }
+        prettifyConsoleText(`Process engine ready.`, "INFO");
         setIsReady(true);
         setIsRunning(false);
         setIsDebugging(false);
@@ -118,6 +118,7 @@ export const CodeEditor = (props) => {
         removeBreakpoint(debuggerState.lineNumber);
         break;
     }
+    debuggerStateRef.current = debuggerState;
   }, [debuggerState]);
 
   function makeMarker() {
