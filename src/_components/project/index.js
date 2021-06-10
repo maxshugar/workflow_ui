@@ -12,7 +12,7 @@ import { Console } from '../console';
 
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient('http://localhost:8000');
+let socket = null;
 
 
 
@@ -20,9 +20,9 @@ export const Project = () => {
 
     useEffect(() => {
         
+        socket = socketIOClient('http://localhost:8000');
         socket.on("connect", data => {
-            setConsoleText('Connected to edge device.');
-            socket.emit('getState');
+            prettifyConsoleText('Connected to edge device.');
         });
 
         socket.on('data', data => {
@@ -62,6 +62,12 @@ export const Project = () => {
         position: { x: 250, y: 100 },
       }
     );
+    
+    const user = useSelector(state => state.authentication.user);
+    
+    const prettifyConsoleText = (text, type) => {
+        setConsoleText(`<${user.username}/> ${text}`);
+    }
 
     const [consoleText, setConsoleText] = useState();
 
@@ -105,7 +111,7 @@ export const Project = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <CodeEditor debuggerState={debuggerState} setConsoleText={setConsoleText} socket={socket} selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
+                        <CodeEditor prettifyConsoleText={prettifyConsoleText} debuggerState={debuggerState} socket={socket} selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
                     </Col>
                     <Col>
                         <GraphEditor selectedNode={selectedNode} setSelectedNode={setSelectedNode} />

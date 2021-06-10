@@ -64,7 +64,7 @@ const initialElements = [
   {
     data: {
       label: "Script Node", 
-      script: 'print("hello")',
+      script: 'print("1")\nprint("2")\nprint("3")\nprint("4")\nprint("5")',
       breakpoints: []
     },
     id: "2",

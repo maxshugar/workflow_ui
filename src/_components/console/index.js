@@ -24,9 +24,6 @@ export const Console = ({consoleText}) => {
     <Terminal
       className={styles.console}
       ref={terminal} // Assign ref to the terminal here
-      welcomeMessage={[
-        "Process execution engine."
-      ]}
         commands={{}}
         readOnly
         disabled={isRunning}
