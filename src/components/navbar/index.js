@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, NavItem } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle, faListAlt, faSignInAlt, faSignOutAlt, faProcedures, faLaptopCode, faCodeBranch } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux';
+import { AuthContext } from "../../_components/app";
 
 import { history } from '../../_helpers';
 import './index.css';
@@ -11,15 +12,31 @@ import { userActions } from '../../_actions';
 
 export const NavBar = (props) => {
     console.log(props);
-    const user = useSelector(state => state.authentication.user);
-    const dispatch = useDispatch();
+    
+    const { state, dispatch } = useContext(AuthContext);
 
     const handleLogOut = () => {
-        dispatch(userActions.logout());
+        // dispatch(userActions.logout());
+        dispatch({
+            type: "LOGOUT"
+          });
         history.push("/");
     }
 
-    const accountNavDropdownTitle = (<FontAwesomeIcon icon={faUserCircle} className="d-inline-block align-middle" />);
+    if(state.user){
+        console.log(state.user)
+    }
+
+    const profileIconStyle = {
+        width: 25,
+        height: 25,
+        borderRadius: 50 / 2,
+        overflow: "hidden",
+        borderWidth: 3,
+        borderColor: "red"
+    }
+
+    const accountNavDropdownTitle = state.user ? (<img style={profileIconStyle} src={state.user.avatar_url} alt="Avatar"/>) : (<FontAwesomeIcon icon={faUserCircle} className="d-inline-block align-middle" />);
 
     return (
         <Navbar bg="light" expand="lg" className="sticky_nav">
@@ -45,7 +62,7 @@ export const NavBar = (props) => {
                     </Link>
 
                     <NavDropdown alignRight title={accountNavDropdownTitle} id="collasible-nav-dropdown">
-                        { user ? 
+                        { state.user ? 
                             <>
                                 <Link to="/projects" className="dropdown-item">
                                     <FontAwesomeIcon icon={faListAlt} className="d-inline-block align-middle mr-2" /> 

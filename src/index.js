@@ -9,8 +9,8 @@ import { store } from './_helpers';
 import './index.css';
 
 // setup fake backend
-import { configureFakeBackend } from './_helpers';
-configureFakeBackend();
+// import { configureFakeBackend } from './_helpers';
+// configureFakeBackend();
  
 ReactDOM.render(
     <Provider store={store}>

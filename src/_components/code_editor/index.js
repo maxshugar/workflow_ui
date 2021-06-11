@@ -79,14 +79,19 @@ export const CodeEditor = (props) => {
         break;
       case "STATE_DEBUGGING":
         setIsDebugging(true);
-        prettifyConsoleText(`Debugging ${selectedNode.data.label}, please wait..`);
+        prettifyConsoleText(
+          `Debugging ${selectedNode.data.label}, please wait..`
+        );
         break;
       case "STATE_COMPLETE":
         setIsRunning(false);
         setIsDebugging(false);
-        prettifyConsoleText(`${selectedNode.data.label} complete :)`, "SUCCESS");
+        prettifyConsoleText(
+          `${selectedNode.data.label} complete :)`,
+          "SUCCESS"
+        );
         setClearMarkers(true);
-        break; 
+        break;
       case "STATE_PAUSED":
         if (debuggerState.breakpoint) {
           markLine(debuggerState.lineNumber);
@@ -99,9 +104,16 @@ export const CodeEditor = (props) => {
         socket.emit("getState");
         break;
       case "STATE_IDLE":
-        if(prevState){
-          if(prevState.state == "STATE_BREAKPOINT_ADDED" || prevState.state == "STATE_BREAKPOINT_REMOVED")
+        if (prevState) {
+          if (
+            prevState.state == "STATE_BREAKPOINT_ADDED" ||
+            prevState.state == "STATE_BREAKPOINT_REMOVED"
+          )
             break;
+          else if(prevState.state == "STATE_ABORTED"){ 
+            // Add current breakpoints back to new debugger instance after abort.
+            socket.emit("addBreakpoints", selectedNode.data.breakpoints);
+          }
         }
         prettifyConsoleText(`Process engine ready.`, "INFO");
         setIsReady(true);
@@ -198,10 +210,12 @@ export const CodeEditor = (props) => {
     const { state, breakpoint } = debuggerStateRef.current;
     let socket = socketRef.current;
     editorRef.current = editor;
+    console.log(breakpointExists(line))
     if (!breakpointExists(line)) {
       console.log(socket);
       socket.emit("addBreakpoint", line + 1);
     } else {
+      console.log("removeBreakpoint")
       socket.emit("removeBreakpoint", line + 1);
     }
   }
