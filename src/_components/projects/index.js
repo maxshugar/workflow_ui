@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 export const Projects = () => {
   const dispatch = useDispatch()
-  const projects = useSelector(state => state.projects.items);
+  const projects = useSelector(state => state.projects);
 
   // useEffect(() => {
   //   dispatch(projectActions.getAll());
@@ -44,7 +44,7 @@ export const Projects = () => {
           <Card>
             <Card.Header>
               <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                My Projects
+                Favourites
         </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="0">
