@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
 import contents from './contents';
 import './index.css';
-import { ListItem } from '../../components/list_item';
+import { ListItem } from '../list_item';
 // import file from "./pages/introduction.md";
 import ReactMarkdown from 'react-markdown'
 

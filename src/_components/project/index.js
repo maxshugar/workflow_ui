@@ -3,12 +3,9 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import './index.css';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { projectActions, taskActions } from '../../_actions';
 import { CodeEditor} from '../code_editor';
 import GraphEditor from '../graph_editor';
 import { Console } from '../console';
-// import { io } from "socket.io-client";
-// import { socket } from '../../_helpers/socket';
 
 import socketIOClient from "socket.io-client";
 

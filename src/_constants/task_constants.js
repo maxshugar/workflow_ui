@@ -1,5 +1,0 @@
-export const taskConstants = {
-    RUN_REQUEST: 'TASKS_RUN_REQUEST',
-    RUN_SUCCESS: 'TASKS_RUN_SUCCESS',
-    RUN_FAILURE: 'TASKS_RUN__FAILURE',   
-};

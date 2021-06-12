@@ -2,23 +2,22 @@ import React, { useEffect } from 'react';
 import { Container, Accordion, Card, Button, ListGroup } from 'react-bootstrap';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
-import { FloatingActionButton } from '../../_components/floating_action_button';
+import { FloatingActionButton } from '../floating_action_button';
 import style from './index.module.css';
-import { history } from '../../_helpers';
+import { history } from '../../helpers';
 import { useSelector, useDispatch } from 'react-redux';
-import { projectActions } from '../../_actions';
 
 export const Projects = () => {
   const dispatch = useDispatch()
   const projects = useSelector(state => state.projects.items);
 
-  useEffect(() => {
-    dispatch(projectActions.getAll());
-  }, [])
+  // useEffect(() => {
+  //   dispatch(projectActions.getAll());
+  // }, [])
 
-  useEffect(() => {
-    console.log(projects);
-  }, [projects])
+  // useEffect(() => {
+  //   console.log(projects);
+  // }, [projects])
 
   return (
     <>

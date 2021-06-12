@@ -4,13 +4,9 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
 import { App } from './_components/app';
-import { history } from './_helpers';
-import { store } from './_helpers';
+import { history } from './helpers';
 import './index.css';
-
-// setup fake backend
-// import { configureFakeBackend } from './_helpers';
-// configureFakeBackend();
+import store from './helpers/store';
  
 ReactDOM.render(
     <Provider store={store}>

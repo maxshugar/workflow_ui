@@ -3,8 +3,7 @@ import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import styles from './index.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { projectActions } from '../../../_actions';
-import { history } from '../../../_helpers';
+import { history } from '../../../helpers';
 
 export const NewProject = (props) => {
 
