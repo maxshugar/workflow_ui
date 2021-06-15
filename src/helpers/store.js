@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import projectsSlice from "../features/projectSlice";
+import projectSlice from "../features/projectSlice";
 import userSlice from "../features/userSlice";
 
 export default configureStore({
     reducer:{
         user: userSlice.reducer,
-        projects: projectsSlice.reducer
+        project: projectSlice.reducer
     }
 })

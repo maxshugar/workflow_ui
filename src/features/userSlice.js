@@ -13,10 +13,23 @@ export const authenticate = createAsyncThunk("user/authenticate", (code) => {
     .catch((error) => error);
 });
 
+export const create = createAsyncThunk("user/create", (_id, email) => {
+  return fetch("http://localhost:4000/v1/user", {
+    method: "POST",
+    body: JSON.stringify({ _id, email }),
+    headers: {
+      Accept: "application/json",
+      "Content-type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .catch((error) => error);
+});
+
 export const userSlice = createSlice({
   name: "user",
   initialState: {
-    gitClientId: "b3ac5023e223abb1c47a",
+    gitClientId: "1da6a9127f6bd20d332f",
     gitRedirectUri: "http://localhost:3000/login",
     user: localStorage.getItem("user")
       ? {
@@ -37,7 +50,7 @@ export const userSlice = createSlice({
     [authenticate.pending]: (state) => {
       state.user = {
         status: "loading",
-        data: {},
+        data: {}, 
         error: {},
       };
     },
@@ -51,6 +64,27 @@ export const userSlice = createSlice({
     },
     [authenticate.rejected]: (state, action) => {
       state.user = {
+        status: "idle",
+        data: {},
+        error: action.payload,
+      };
+    },
+    [create.pending]: (state) => {
+      state = {
+        status: "loading",
+        data: {},
+        error: {},
+      };
+    },
+    [create.fulfilled]: (state, action) => {
+      state = {
+        status: "idle",
+        data: action.payload,
+        error: {},
+      };
+    },
+    [create.rejected]: (state, action) => {
+      state = {
         status: "idle",
         data: {},
         error: action.payload,

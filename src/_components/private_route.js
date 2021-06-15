@@ -1,11 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
 function PrivateRoute({ component: Component, roles, ...rest }) {
+    const userState = useSelector((state) => state.user);
     return (
         <Route {...rest} render={props => {
-            if (!localStorage.getItem('user')) {
-                console.log(localStorage.getItem('user'));
+            if (!userState.user) {
                 // not logged in so redirect to login page with the return url
                 return <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
             }

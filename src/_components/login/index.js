@@ -14,19 +14,22 @@ export const Login = () => {
   const { gitClientId, gitRedirectUri } = userState;
 
   useEffect(() => {
+
     // After requesting Github access, Github redirects back to your app with a code parameter
     const url = window.location.href;
     const hasCode = url.includes("?code=");
+    console.log(url)
     // If Github API returns the code parameter
     if (hasCode) {
       const newUrl = url.split("?code=");
+      console.log(newUrl[1])
       window.history.pushState({}, null, newUrl[0]);
       dispatch(authenticate(newUrl[1]));
     }
   }, [dispatch, data]);
 
   if (userState.user) {
-    return <Redirect to="/home" />;
+    return <Redirect to="/projects" />;
   }
 
   return (
