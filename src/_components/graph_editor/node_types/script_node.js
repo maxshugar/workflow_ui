@@ -12,13 +12,13 @@ export const ScriptNode = ({ data }) => {
       <div style={customNodeStyles}>
         <Handle
           type="target"
-          position="left"
+          position="top"
           style={{ height: '10px', width: '10px' }}
         />
         <div>{data.label}</div>
         <Handle
           type="source"
-          position="right"
+          position="bottom"
           style={{ height: '10px', width: '10px' }}
         />
       </div>

@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 
-import { history } from "../../helpers";
 import { PrivateRoute } from "../private_route";
 import { NavBar } from "../navbar";
 import { Home } from "../home";

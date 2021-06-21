@@ -78,6 +78,7 @@ export const Projects = () => {
                         className={style.project_list_item}
                         onClick={() => history.push(`/projects/${project._id}`)}
                         id={project._id}
+                        key={project._id}
                       >
                         {project._id}
                       </ListGroup.Item>

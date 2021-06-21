@@ -13,22 +13,60 @@ export const getAll = createAsyncThunk("projects/getAll", (code) => {
 });
 
 export const create = createAsyncThunk(
-  "project/create", 
+  "project/create",
   ({ accessToken, name, ownerId }) => {
-    console.log(accessToken)
+    console.log(accessToken);
     return fetch("http://localhost:4000/v1/project", {
       method: "POST",
-      body: JSON.stringify({ _id: name, ownerId }),
+      body: JSON.stringify({
+        _id: name,
+        ownerId,
+        elements: [
+          {
+            id: "Start",
+            type: "StartNode",
+            data: {
+              label: "Start",
+              script: "",
+              breakpoints: [],
+            },
+            position: { x: 250, y: 100 },
+          },
+          {
+            id: "End",
+            type: "EndNode",
+            data: {
+              label: "End",
+              script: "",
+              breakpoints: [],
+            },
+            position: { x: 250, y: 300 },
+          }
+        ],
+      }),
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "Content-type": "application/json",
-        "Authorization": `token ${accessToken}`
+        Authorization: `token ${accessToken}`,
       },
     })
       .then((response) => response.json())
       .catch((error) => error);
   }
 );
+
+export const update = createAsyncThunk("project/update", (project) => {
+  return fetch(`http://localhost:4000/v1/project/${project._id}`, {
+    method: "PUT",
+    body: JSON.stringify(project),
+    headers: {
+      Accept: "application/json",
+      "Content-type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .catch((error) => error);
+});
 
 export const get = createAsyncThunk("project/get", (id) => {
   console.log(id);
@@ -105,6 +143,15 @@ export const projectSlice = createSlice({
       state.project = makeFulfilledState(action);
     },
     [get.rejected]: (state, action) => {
+      state.project = makeRejectedState(action);
+    },
+    [update.pending]: (state) => {
+      state.project = makePendingState();
+    },
+    [update.fulfilled]: (state, action) => {
+      //state.project = makeFulfilledState(action);
+    },
+    [update.rejected]: (state, action) => {
       state.project = makeRejectedState(action);
     },
   },

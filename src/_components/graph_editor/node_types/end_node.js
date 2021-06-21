@@ -10,10 +10,10 @@ const customNodeStyles = {
 export const EndNode = ({ data }) => {
     return (
       <div style={customNodeStyles}>
-        <div>End Sequence</div>
+        <div>END</div>
         <Handle
           type="target"
-          position="left"
+          position="top"
           style={{ height: '10px', width: '10px' }}
         />
       </div>

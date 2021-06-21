@@ -10,10 +10,10 @@ const customNodeStyles = {
 export const StartNode = ({ data }) => {
     return (
       <div style={customNodeStyles}>
-        <div>Start Sequence</div>
+        <div>START</div>
         <Handle
           type="source"
-          position="right"
+          position="bottom"
           style={{ height: '10px', width: '10px' }}
         />
       </div>

@@ -10,7 +10,6 @@ export const SideBar =  ({setFormatLayout}) => {
       <div className="dndnode" onDragStart={(event) => onDragStart(event, 'ScriptNode')} draggable>
         ScriptNode
       </div>
-      <button onClick={setFormatLayout(true)}>Format Layout</button>
     </aside>
   );
 };
