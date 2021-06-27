@@ -45,6 +45,7 @@
     "react-scripts": "^4.0.1",
     "react-sidebar": "^3.0.2",
     "react-simple-code-editor": "^0.11.0",
+    "react-split": "^2.0.11",
     "react-terminal-ui": "^0.1.11",
     "react-uuid": "^1.0.2",
     "redux": "^4.0.5",

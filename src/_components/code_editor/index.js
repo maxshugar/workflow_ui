@@ -225,7 +225,8 @@ export const CodeEditor = (props) => {
   }
 
   return (
-    <div className={`editor-container ${open ? "" : "collapsed"}`}>
+    // <div className={`editor-container ${open ? "" : "collapsed"}`}>
+    <div className={`editor-container`}>
       <div className="editor-title">
         <h5>Editor Title</h5>
         <div>
@@ -293,13 +294,13 @@ export const CodeEditor = (props) => {
             />
           </Button>
 
-          <button
+          {/* <button
             type="button"
             className="expand-collapse-btn"
             onClick={() => setOpen((prevOpen) => !prevOpen)}
           >
             <FontAwesomeIcon icon={open ? faCompressAlt : faExpandAlt} />
-          </button>
+          </button> */}
         </div>
       </div>
       <ControlledEditor

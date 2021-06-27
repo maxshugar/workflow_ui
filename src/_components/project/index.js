@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "./index.css";
+import Styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { CodeEditor } from "../code_editor";
 import GraphEditor from "../graph_editor";
@@ -9,6 +10,7 @@ import { Console } from "../console";
 import socketIOClient from "socket.io-client";
 import { get as getProject } from "../../features/projectSlice";
 import SideBar from "../sidebar";
+import Split from "react-split";
 
 let socket = null;
 
@@ -45,9 +47,14 @@ export const Project = () => {
     socket.on("state", (state) => {
       setDebuggerState(state);
     });
+
+    socket.on("sequencerState", ({ state, taskId }) => {
+      if (state) setSequencerState({ state, taskId });
+    });
   }, []);
 
   const [debuggerState, setDebuggerState] = useState(null);
+  const [sequencerState, setSequencerState] = useState(null);
 
   const [selectedNode, setSelectedNode] = useState({
     id: "Start",
@@ -74,10 +81,32 @@ export const Project = () => {
   return (
     <>
       <Container fluid style={{ maxHeight: "100%" }}>
-        {/* <SideBar>
-        <h1>hey!</h1>
-      </SideBar> */}
-        <Row>
+        <Wrapper>
+          <Split className="split" direction="horizontal">
+            <div>
+
+                  <CodeEditor
+                    prettifyConsoleText={prettifyConsoleText}
+                    debuggerState={debuggerState}
+                    socket={socket}
+                    selectedNode={selectedNode}
+                    setSelectedNode={setSelectedNode}
+                  />
+                  <Console consoleText={consoleText} />
+         
+            </div>
+
+              <GraphEditor
+                selectedNode={selectedNode}
+                setSelectedNode={setSelectedNode}
+                project={project}
+                socket={socket}
+                sequencerState={sequencerState}
+              />
+    
+          </Split>
+        </Wrapper>
+        {/* <Row>
           <Col>
             <h3 style={{ display: "inline-block" }}>
               Project Name: {project && project._id}
@@ -86,27 +115,39 @@ export const Project = () => {
         </Row>
         <Row>
           <Col>
-            <CodeEditor
-              prettifyConsoleText={prettifyConsoleText}
-              debuggerState={debuggerState}
-              socket={socket}
-              selectedNode={selectedNode}
-              setSelectedNode={setSelectedNode}
-            />
+            
           </Col>
           <Col>
-            <GraphEditor
-              selectedNode={selectedNode}
-              setSelectedNode={setSelectedNode}
-              project={project}
-              socket={socket}
-            />
+            
           </Col>
         </Row>
         <Row>
-          <Console consoleText={consoleText} />
-        </Row>
+          
+        </Row> */}
       </Container>
     </>
   );
 };
+
+const Wrapper = Styled.section`
+  .split {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+
+  .gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  .gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+  }
+  .gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+}
+`;

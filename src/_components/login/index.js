@@ -36,8 +36,7 @@ export const Login = () => {
     <Wrapper>
       <section className="container">
         <div>
-          <h1>Welcome</h1>
-          <span>Super amazing app</span>
+          <h1>Auth0 Sign In</h1>
           <span>{data.errorMessage}</span>
           <div className="login-container">
             {data.isLoading ? (

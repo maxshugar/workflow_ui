@@ -2,6 +2,10 @@ html {
     overflow-y: scroll;
 }
 
+html, body {
+    height:100%;
+}
+
 @font-face {
     font-family: "myriad_pro_bold";
     src: local("myriad_pro_bold"),

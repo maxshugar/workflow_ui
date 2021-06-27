@@ -4,12 +4,16 @@ export const SideBar =  ({setFormatLayout}) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
+
+  const customNodeStyles = {
+    background: '#9CA8B3',
+    color: '#FFF',
+    padding: 10,
+};
+
   return (
-    <aside>
-      <div className="description">You can drag these nodes to the pane on the right.</div>
-      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'ScriptNode')} draggable>
-        ScriptNode
+      <div  style={customNodeStyles} className="dndnode" onDragStart={(event) => onDragStart(event, 'ScriptNode')} draggable>
+        New Node
       </div>
-    </aside>
   );
 };

@@ -2,6 +2,7 @@
     flex-direction: column;
     display: flex;
     height: 100%;
+    width: 100%;
   }
   
   .dndflow aside {
@@ -56,15 +57,12 @@
   }
 
   .updatenode__controls {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 4;
-    font-size: 12px;
+    display: inline-block;
+
   }
   
   .updatenode__controls label {
-    display: block;
+    display: inline-block;
   }
   
   .updatenode__bglabel {

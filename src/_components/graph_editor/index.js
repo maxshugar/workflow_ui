@@ -14,95 +14,7 @@ import { Button } from "react-bootstrap";
 import { update } from "../../features/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import uuid from "react-uuid";
-
-// const getLayoutedElements = (elements, direction = "TB") => {
-//   const isHorizontal = direction === "LR";
-//   dagreGraph.setGraph({ rankdir: direction });
-
-//   elements.forEach((el) => {
-//     if (isNode(el)) {
-//       dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-//     } else {
-//       dagreGraph.setEdge(el.source, el.target);
-//     }
-//   });
-
-//   dagre.layout(dagreGraph);
-
-//   return elements.map((el) => {
-//     if (isNode(el)) {
-//       const nodeWithPosition = dagreGraph.node(el.id);
-//       el.targetPosition = isHorizontal ? "left" : "top";
-//       el.sourcePosition = isHorizontal ? "right" : "bottom";
-
-//       // unfortunately we need this little hack to pass a slightly different position
-//       // to notify react flow about the change. Moreover we are shifting the dagre node position
-//       // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
-//       el.position = {
-//         x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
-//         y: nodeWithPosition.y - nodeHeight / 2,
-//       };
-//     }
-
-//     return el;
-//   });
-// };
-
-// const initialElements = [
-//   {
-//     id: "Start",
-//     type: "StartNode",
-//     data: {
-//       label: "Start",
-//       script: "",
-//       breakpoints: [],
-//     },
-//     position: { x: 250, y: 100 },
-//   },
-//   {
-//     id: "Node_1",
-//     type: "ScriptNode",
-//     data: {
-//       label: "Node_1",
-//       script: 'print("1")\nprint("2")\nprint("3")\nprint("4")\nprint("5")',
-//       breakpoints: [],
-//     },
-//     position: { x: 250, y: 200 },
-//   },
-//   {
-//     id: "reactflow__edge-1null-2null",
-//     source: "Start",
-//     sourceHandle: null,
-//     target: "Node_1",
-//     targetHandle: null,
-//   },
-//   {
-//     id: "End",
-//     type: "EndNode",
-//     data: {
-//       label: "End",
-//       script: "",
-//       breakpoints: [],
-//     },
-//     position: { x: 250, y: 300 },
-//   },
-//   {
-//     id: "reactflow__edge-2null-3null",
-//     source: "Node_1",
-//     sourceHandle: null,
-//     target: "End",
-//     targetHandle: null,
-//   },
-// ];
-
-const updateId = () => {};
-
-// const getId = () => {
-//   elements.find((el) => {
-//     el.
-//   })
-//   `dndnode_${id++}`
-// };
+import Styled from "styled-components";
 
 const nodeTypes = {
   StartNode,
@@ -110,11 +22,28 @@ const nodeTypes = {
   EndNode,
 };
 
-const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
+const GraphEditor = ({
+  selectedNode,
+  setSelectedNode,
+  project,
+  socket,
+  sequencerState,
+}) => {
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const socketRef = useRef(socket);
-  
+
+  const resetTaskIcons = () => {
+    setElements((els) =>
+      els.map((el) => {
+        if (el.type === "ScriptNode") {
+          el.data.state = "STATE_SEQ_TASK_IDLE";
+        }
+        return el;
+      })
+    );
+  };
+
   useEffect(() => {
     socketRef.current = socket;
   }, [socket]);
@@ -123,6 +52,7 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
     console.log(project);
     if (project) {
       setElements(JSON.parse(JSON.stringify(project.elements)));
+      resetTaskIcons();
     }
   }, [project]);
 
@@ -131,6 +61,21 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
   const dispatch = useDispatch();
 
   const [formatLayout, setFormatLayout] = useState(false);
+
+  useEffect(() => {
+    console.log(sequencerState);
+    if (!sequencerState) return;
+    const { state, taskId } = sequencerState;
+    if (!state) return;
+    setElements((els) =>
+      els.map((el) => {
+        if (el.id === taskId) {
+          el.data.state = state;
+        }
+        return el;
+      })
+    );
+  }, [sequencerState]);
 
   const handleSave = () => {
     console.log(project);
@@ -142,6 +87,33 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
   };
 
   const [selectedNodeName, setSelectedNodeName] = useState("");
+
+  const handleAdd = () => {
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const position = reactFlowInstance.project({
+      x: reactFlowBounds.left - 500,
+      y: reactFlowBounds.top,
+    });
+
+    console.log(reactFlowBounds)
+
+    const id = uuid();
+
+    const newNode = {
+      id,
+      type: "ScriptNode",
+      position,
+      data: {
+        label: `new node`,
+        script: "",
+        breakpoints: [],
+        state: "STATE_SEQ_TASK_IDLE",
+      },
+    };
+
+    setElements([...elements, newNode]);
+    setSelectedNode(newNode);
+  }
 
   const handleRunSequence = () => {
     // Get nodes on canvas.
@@ -176,10 +148,8 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
         }
       }
     }
-
-    socketRef.current.emit('runSequence', payload);
-
-    console.log(payload);
+    resetTaskIcons();
+    socketRef.current.emit("runSequence", payload);
   };
 
   const onElementClick = (evt, node) => {
@@ -195,7 +165,8 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
   useEffect(() => setSelectedNodeName(selectedNode.data.label), [selectedNode]);
 
   useEffect(() => {
-    setElements((els) => els.map((el) => {
+    setElements((els) =>
+      els.map((el) => {
         if (el.id === selectedNode.id) {
           el.data = {
             ...el.data,
@@ -216,7 +187,7 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
     setElements((els) => {
       return els.map((el) => {
         if (el.id === node.id) {
-          el.position = node.position
+          el.position = node.position;
         }
         return el;
       });
@@ -238,79 +209,100 @@ const GraphEditor = ({ selectedNode, setSelectedNode, project, socket }) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
-  const onDrop = (event) => {
-    event.preventDefault();
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const type = event.dataTransfer.getData("application/reactflow");
-    const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
+  // const onDrop = (event) => {
+  //   event.preventDefault();
+  //   const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+  //   const type = event.dataTransfer.getData("application/reactflow");
+  //   const position = reactFlowInstance.project({
+  //     x: event.clientX - reactFlowBounds.left,
+  //     y: event.clientY - reactFlowBounds.top,
+  //   });
 
-    const id = uuid();
+  //   const id = uuid();
 
-    const newNode = {
-      id,
-      type,
-      position,
-      data: {
-        label: `new node`,
-        script: "",
-        breakpoints: [],
-      },
-    };
+  //   const newNode = {
+  //     id,
+  //     type,
+  //     position,
+  //     data: {
+  //       label: `new node`,
+  //       script: "",
+  //       breakpoints: [],
+  //       state: "STATE_SEQ_TASK_IDLE",
+  //     },
+  //   };
 
-    setElements([...elements, newNode]);
-    setSelectedNode(newNode);
-  };
+  //   setElements([...elements, newNode]);
+  //   setSelectedNode(newNode);
+  // };
 
   return (
-    <div className="dndflow">
-      <ReactFlowProvider>
-        <div style={{ float: "right" }}>
-          <Button
-            style={{ margin: "5px" }}
-            disabled={selectedNode.type !== "ScriptNode"}
-            onClick={() => handleRunSequence()}
-          >
-            Run Sequence
-          </Button>
-          <Button
-            style={{ margin: "5px" }}
-            disabled={selectedNode.type !== "ScriptNode"}
-            onClick={() => handleSave()}
-          >
-            Save
-          </Button>
+    // <Wrapper>
+    <div style={{ padding: '.5rem' }}>
+      <div style={{ backgroundColor: "hsl(225, 6%, 13%)" }} className={`editor-title`}>
+        <Button
+          style={{ margin: "5px" }}
+          disabled={selectedNode.type !== "ScriptNode"}
+          onClick={() => handleRunSequence()}
+        >
+          Run Sequence
+        </Button>
+        <Button
+          style={{ margin: "5px" }}
+          disabled={selectedNode.type !== "ScriptNode"}
+          onClick={() => handleSave()}
+        >
+          Save
+        </Button>
+        <Button
+          style={{ margin: "5px" }}
+          onClick={() => handleAdd()}
+        >
+          Add Task
+        </Button>
+        <div className="updatenode__controls">
+          <label>Selected Task:</label>
+          <input
+            value={selectedNodeName}
+            onChange={(evt) => setSelectedNodeName(evt.target.value)}
+          />
         </div>
-        <SideBar setFormatLayout={setFormatLayout} />
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-          <ReactFlow
-            elements={elements}
-            nodeTypes={nodeTypes}
-            onConnect={onConnect}
-            onElementsRemove={onElementsRemove}
-            onElementClick={onElementClick}
-            onLoad={onLoad}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onNodeDragStart={onNodeDragStart}
-            onNodeDragStop={onNodeDragStop}
-            snapToGrid={true}
-            snapGrid={[15, 15]}
-          >
-            <div className="updatenode__controls">
-              <label>label:</label>
-              <input
-                value={selectedNodeName}
-                onChange={(evt) => setSelectedNodeName(evt.target.value)}
-              />
-            </div>
-            <Controls />
-          </ReactFlow>
-        </div>
-      </ReactFlowProvider>
+      </div>
+      <div className="dndflow">
+        <ReactFlowProvider>
+          <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <ReactFlow
+              elements={elements}
+              nodeTypes={nodeTypes}
+              onConnect={onConnect}
+              onElementsRemove={onElementsRemove}
+              onElementClick={onElementClick}
+              onLoad={onLoad}
+              // onDrop={onDrop}
+              onDragOver={onDragOver}
+              onNodeDragStart={onNodeDragStart}
+              onNodeDragStop={onNodeDragStop}
+              snapToGrid={true}
+              snapGrid={[15, 15]}
+            >
+              <Controls />
+            </ReactFlow>
+          </div>
+        </ReactFlowProvider>
+      </div>
     </div>
   );
 };
 export default GraphEditor;
+
+const Wrapper = Styled.section`
+.editorContainer {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem;
+  background-color: hsl(225, 6%, 25%);
+  height: 100vh;
+}
+`;
