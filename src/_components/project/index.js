@@ -48,7 +48,30 @@ export const Project = () => {
       setDebuggerState(state);
     });
 
-    socket.on("sequencerState", ({ state, taskId }) => {
+    socket.on("sequencerState", ({ state, taskId, name }) => {
+      console.log(state)
+
+      switch(state){
+        case 'STATE_SEQ_RUNNING':
+          setConsoleText({ text: 'v8 sequencer starting.', style: { color: "green" } });
+        break;
+        case 'STATE_SEQ_COMPLETE':
+          setConsoleText({ text: 'v8 sequencer complete.', style: { color: "green" } });
+        break;
+        case 'STATE_SEQ_IDLE':
+          setConsoleText({ text: `v8 sequencer idle.`, style: { color: "aqua" } });
+        break;
+        case 'STATE_SEQ_TASK_RUNNING':
+          setConsoleText({ text: `[${name}] running.`, style: { color: "aqua" } });
+        break;
+        case 'STATE_SEQ_TASK_COMPLETE':
+          setConsoleText({ text: `[${name}] complete.`, style: { color: "green" } });
+        break;
+        case 'STATE_SEQ_TASK_ERROR':
+          setConsoleText({ text: `[${name}] error.`, style: { color: "red" } });
+        break;
+      }
+
       if (state) setSequencerState({ state, taskId });
     });
   }, []);
@@ -106,24 +129,6 @@ export const Project = () => {
     
           </Split>
         </Wrapper>
-        {/* <Row>
-          <Col>
-            <h3 style={{ display: "inline-block" }}>
-              Project Name: {project && project._id}
-            </h3>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            
-          </Col>
-          <Col>
-            
-          </Col>
-        </Row>
-        <Row>
-          
-        </Row> */}
       </Container>
     </>
   );

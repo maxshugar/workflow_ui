@@ -8,8 +8,6 @@ import "codemirror/addon/selection/active-line";
 import { Controlled as ControlledEditor } from "react-codemirror2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCompressAlt,
-  faExpandAlt,
   faPlay,
   faPlayCircle,
   faShare,
@@ -18,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import "./index.css";
+import { Dropdown } from 'react-bootstrap';
 
 export const CodeEditor = (props) => {
   const {
@@ -28,7 +27,6 @@ export const CodeEditor = (props) => {
     debuggerState,
   } = props;
 
-  const [open, setOpen] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
   const [isDebugging, setIsDebugging] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -37,6 +35,8 @@ export const CodeEditor = (props) => {
 
   const debuggerStateRef = useRef(debuggerState);
   const socketRef = useRef(socket);
+
+  const [language, setLanguage] = useState('language');
 
   const handleRun = () => {
     prettifyConsoleText(`Running ${selectedNode.data.label}, please wait..`);
@@ -54,10 +54,13 @@ export const CodeEditor = (props) => {
     socketRef.current = socket;
   }, [socket]);
 
-  useEffect(() => {
+  const clearMarkersDOM = () => {
     for (let i = 0; i < markers.length; i++) {
       markers[i].clear();
     }
+  }
+
+  useEffect(() => {
     setMarkers([]);
     setClearMarkers(false);
   }, [clearMarkers]);
@@ -68,6 +71,15 @@ export const CodeEditor = (props) => {
     let m = editorRef.current.markText(from, to, { className });
     setMarkers(markers.concat(m));
   };
+
+  useEffect(() => {
+    
+    let selectedNodeCopy = { ...selectedNode };
+    selectedNodeCopy.data.language = language;
+    setSelectedNode(selectedNodeCopy);
+    editorRef.current.setOption("mode", language);
+    console.log(editorRef.current)
+  }, [language]);
 
   useEffect(() => {
     let prevState = debuggerStateRef.current;
@@ -90,6 +102,7 @@ export const CodeEditor = (props) => {
           `${selectedNode.data.label} complete :)`,
           "SUCCESS"
         );
+        clearMarkersDOM();
         setClearMarkers(true);
         break;
       case "STATE_PAUSED":
@@ -100,6 +113,7 @@ export const CodeEditor = (props) => {
       case "STATE_ABORTED":
         prettifyConsoleText(`Aborted.`);
         setIsReady(false);
+        clearMarkersDOM();
         setClearMarkers(true);
         socket.emit("getState");
         break;
@@ -110,7 +124,7 @@ export const CodeEditor = (props) => {
             prevState.state == "STATE_BREAKPOINT_REMOVED"
           )
             break;
-          else if(prevState.state == "STATE_ABORTED"){ 
+          else if (prevState.state == "STATE_ABORTED") {
             // Add current breakpoints back to new debugger instance after abort.
             socket.emit("addBreakpoints", selectedNode.data.breakpoints);
           }
@@ -121,6 +135,7 @@ export const CodeEditor = (props) => {
         setIsDebugging(false);
         break;
       case "STATE_CONTINUING":
+        clearMarkersDOM();
         setClearMarkers(true);
         break;
       case "STATE_BREAKPOINT_ADDED":
@@ -146,6 +161,9 @@ export const CodeEditor = (props) => {
 
   // Update breakpoints when switching between nodes.
   useEffect(() => {
+
+    setLanguage(selectedNode.data.language)
+
     // If a new node has been selected.
     if (selectedNode.id != selectedNodeRef.current.id) {
       // Remove all breakpoints for previously selected node.
@@ -172,7 +190,6 @@ export const CodeEditor = (props) => {
   }, [selectedNode]);
 
   function handleChange(editor, data, value) {
-    console.log("onBeforeChange");
     let selectedNodeCopy = { ...selectedNode };
     selectedNodeCopy.data.script = value;
     setSelectedNode(selectedNodeCopy);
@@ -201,21 +218,26 @@ export const CodeEditor = (props) => {
     if (index > -1) {
       selectedNodeCopy.data.breakpoints.splice(index, 1);
       setSelectedNode(selectedNodeCopy);
-      editor.setGutterMarker(lineNumber - 1, "breakpoints", null);
-      //editor.addLineClass(line, "line", "new-breakpoint");
+      editor.setGutterMarker(lineNumber - 1, "breakpoints", undefined);
     }
   }
 
   function handleGutterClick(editor, line, str, ent) {
-    const { state, breakpoint } = debuggerStateRef.current;
+
+    if(selectedNodeRef.current.type !== 'ScriptNode')
+      return;
+    
+    if(selectedNodeRef.current.data.language !== 'python')
+      return;
+
     let socket = socketRef.current;
     editorRef.current = editor;
-    console.log(breakpointExists(line))
+    
+    let val = breakpointExists(line);
+
     if (!breakpointExists(line)) {
-      console.log(socket);
       socket.emit("addBreakpoint", line + 1);
     } else {
-      console.log("removeBreakpoint")
       socket.emit("removeBreakpoint", line + 1);
     }
   }
@@ -293,14 +315,15 @@ export const CodeEditor = (props) => {
               icon={faStopCircle}
             />
           </Button>
-
-          {/* <button
-            type="button"
-            className="expand-collapse-btn"
-            onClick={() => setOpen((prevOpen) => !prevOpen)}
-          >
-            <FontAwesomeIcon icon={open ? faCompressAlt : faExpandAlt} />
-          </button> */}
+          <Dropdown style={{display: 'inline-block', width: '120px'}} >
+            <Dropdown.Toggle variant="success" id="dropdown-basic" disabled={selectedNode && selectedNode.type !== 'ScriptNode'}>
+              {language}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setLanguage('python')} >Python</Dropdown.Item>
+              <Dropdown.Item onClick={() => setLanguage('javascript')}>JavaScript</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
       <ControlledEditor

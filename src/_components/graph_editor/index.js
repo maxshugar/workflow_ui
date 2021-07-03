@@ -4,17 +4,13 @@ import ReactFlow, {
   addEdge,
   removeElements,
   Controls,
-  isNode,
 } from "react-flow-renderer";
-import { SideBar } from "./sidebar";
 import "./dnd.css";
 import { EndNode, ScriptNode, StartNode } from "./node_types";
-import dagre from "dagre";
 import { Button } from "react-bootstrap";
 import { update } from "../../features/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import uuid from "react-uuid";
-import Styled from "styled-components";
 
 const nodeTypes = {
   StartNode,
@@ -49,18 +45,17 @@ const GraphEditor = ({
   }, [socket]);
 
   useEffect(() => {
-    console.log(project);
     if (project) {
-      setElements(JSON.parse(JSON.stringify(project.elements)));
-      resetTaskIcons();
+      if(project.hasOwnProperty('elements')){
+        setElements(JSON.parse(JSON.stringify(project.elements)));
+        resetTaskIcons();
+      }
     }
   }, [project]);
 
   const [elements, setElements] = useState([]);
 
   const dispatch = useDispatch();
-
-  const [formatLayout, setFormatLayout] = useState(false);
 
   useEffect(() => {
     console.log(sequencerState);
@@ -78,11 +73,9 @@ const GraphEditor = ({
   }, [sequencerState]);
 
   const handleSave = () => {
-    console.log(project);
-    console.log(elements);
-
     let newProject = { ...project };
     newProject.elements = elements;
+    console.log(newProject)
     dispatch(update(newProject));
   };
 
@@ -106,6 +99,7 @@ const GraphEditor = ({
       data: {
         label: `new node`,
         script: "",
+        language: selectedNode.data.language || "python",
         breakpoints: [],
         state: "STATE_SEQ_TASK_IDLE",
       },
@@ -127,10 +121,13 @@ const GraphEditor = ({
     for (let i = 0; i < elements.length; i++) {
       const el = elements[i];
 
-      if (el.type == "ScriptNode") {
+      if (el.type === "ScriptNode" || el.type === "EndNode") {
         payload.nodes[el.id] = {
           code: el.data.script,
           predecessors: [],
+          language: el.data.language,
+          name: el.data.label,
+          type: el.type
         };
       }
 
@@ -139,12 +136,8 @@ const GraphEditor = ({
         // We know that this is an edge.
         if (el.source === "Start") {
           payload.startNodes.push(el.target);
-        } else if (el.target != "End") {
-          if (payload.nodes.hasOwnProperty(el.target)) {
-            payload.nodes[el.target].predecessors.push(el.source);
-          } else {
-            throw Error("Node not loaded yet: " + el.target);
-          }
+        } else if (payload.nodes.hasOwnProperty(el.target)) {
+          payload.nodes[el.target].predecessors.push(el.source);
         }
       }
     }
@@ -152,9 +145,22 @@ const GraphEditor = ({
     socketRef.current.emit("runSequence", payload);
   };
 
+  useEffect(() => {
+    // Save previously selected node.
+    if(selectedNode){
+      setElements((els) =>
+        els.map((el) => {
+          if (el.id === selectedNode.id) {
+            el = selectedNode;
+          }
+          return el;
+        })
+      );
+    }
+  }, [selectedNode])
+
   const onElementClick = (evt, node) => {
     if (node.type === "ScriptNode") {
-      console.log("changing selected node to " + node.data.label);
       setSelectedNode(node);
       return true;
     } else {
@@ -196,7 +202,7 @@ const GraphEditor = ({
   const onElementsRemove = (elementsToRemove) => {
     for (let i = 0; i < elementsToRemove.length; i++) {
       const el = elementsToRemove[i];
-      if (el.type != "ScriptNode" && !el.hasOwnProperty("source")) {
+      if (el.type !== "ScriptNode" && !el.hasOwnProperty("source")) {
         console.log("Can't delete node of type " + el.type);
         return;
       }
@@ -294,15 +300,3 @@ const GraphEditor = ({
   );
 };
 export default GraphEditor;
-
-const Wrapper = Styled.section`
-.editorContainer {
-  flex-grow: 1;
-  flex-basis: 0;
-  display: flex;
-  flex-direction: column;
-  padding: .5rem;
-  background-color: hsl(225, 6%, 25%);
-  height: 100vh;
-}
-`;

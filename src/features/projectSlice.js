@@ -56,7 +56,8 @@ export const create = createAsyncThunk(
 );
 
 export const update = createAsyncThunk("project/update", (project) => {
-  return fetch(`http://localhost:4000/v1/project/${project._id}`, {
+  console.log(project.elements[2].position)
+  return fetch(`http://localhost:4000/v1/project/${project.id}`, {
     method: "PUT",
     body: JSON.stringify(project),
     headers: {
@@ -149,7 +150,8 @@ export const projectSlice = createSlice({
       state.project = makePendingState();
     },
     [update.fulfilled]: (state, action) => {
-      //state.project = makeFulfilledState(action);
+      //console.log(action.payload.msg.elements[2].position)
+      state.project = makeFulfilledState(action);
     },
     [update.rejected]: (state, action) => {
       state.project = makeRejectedState(action);
@@ -160,3 +162,4 @@ export const projectSlice = createSlice({
 export const { clearProject } = projectSlice.actions;
 
 export default projectSlice;
+ 

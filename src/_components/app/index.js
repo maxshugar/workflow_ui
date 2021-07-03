@@ -17,7 +17,6 @@ import { useLocation } from "react-router-dom";
 
 export const App = () => {
   const location = useLocation();
-
   return (
     <React.Fragment>
       <NavBar location={location} />
