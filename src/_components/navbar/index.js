@@ -51,7 +51,7 @@ export const NavBar = (props) => {
   );
 
   return (
-    <Navbar bg="light" expand="lg" className="sticky_nav">
+    <Navbar style={{borderBottom: '2px solid black'}} expand="lg" className="sticky_nav">
       <Navbar.Brand href="/">
         Process Engine{" "}
         <FontAwesomeIcon icon={faCodeBranch} className="d-inline-block ml-2" />
@@ -59,10 +59,10 @@ export const NavBar = (props) => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
-          <Link to="/" className="nav-link">
+          <Link to="/" className="nav-link my-auto">
             Home
           </Link>
-          <Link to="/docs" className="nav-link">
+          <Link to="/docs" className="nav-link my-auto">
             Docs
           </Link>
 

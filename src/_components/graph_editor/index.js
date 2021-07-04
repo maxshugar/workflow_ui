@@ -4,6 +4,7 @@ import ReactFlow, {
   addEdge,
   removeElements,
   Controls,
+  Background,
 } from "react-flow-renderer";
 import "./dnd.css";
 import { EndNode, ScriptNode, StartNode } from "./node_types";
@@ -11,6 +12,12 @@ import { Button } from "react-bootstrap";
 import { update } from "../../features/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import uuid from "react-uuid";
+import {
+  faPlayCircle,
+  faPlusCircle,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const nodeTypes = {
   StartNode,
@@ -21,6 +28,8 @@ const nodeTypes = {
 const GraphEditor = ({
   selectedNode,
   setSelectedNode,
+  prevSelectedNode,
+  setPrevSelectedNode,
   project,
   socket,
   sequencerState,
@@ -46,7 +55,7 @@ const GraphEditor = ({
 
   useEffect(() => {
     if (project) {
-      if(project.hasOwnProperty('elements')){
+      if (project.hasOwnProperty("elements")) {
         setElements(JSON.parse(JSON.stringify(project.elements)));
         resetTaskIcons();
       }
@@ -58,7 +67,6 @@ const GraphEditor = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(sequencerState);
     if (!sequencerState) return;
     const { state, taskId } = sequencerState;
     if (!state) return;
@@ -75,8 +83,26 @@ const GraphEditor = ({
   const handleSave = () => {
     let newProject = { ...project };
     newProject.elements = elements;
-    console.log(newProject)
+    let selectedId = null;
+    for(let i = 0; i < newProject.elements.length; i++){
+      let el = newProject.elements[i];
+      if(el.type === 'ScriptNode'){
+        if(el.data.selected)
+          selectedId = el.id;
+        el.data.selected = false;
+      }
+    }
     dispatch(update(newProject));
+    if(selectedId){
+      setElements((els) =>
+        els.map((el) => {
+          if (el.id === selectedId) {
+            el.data.selected = true;
+          }
+          return el;
+        })
+      );
+    }
   };
 
   const [selectedNodeName, setSelectedNodeName] = useState("");
@@ -87,8 +113,6 @@ const GraphEditor = ({
       x: reactFlowBounds.left - 500,
       y: reactFlowBounds.top,
     });
-
-    console.log(reactFlowBounds)
 
     const id = uuid();
 
@@ -107,7 +131,7 @@ const GraphEditor = ({
 
     setElements([...elements, newNode]);
     setSelectedNode(newNode);
-  }
+  };
 
   const handleRunSequence = () => {
     // Get nodes on canvas.
@@ -127,7 +151,7 @@ const GraphEditor = ({
           predecessors: [],
           language: el.data.language,
           name: el.data.label,
-          type: el.type
+          type: el.type,
         };
       }
 
@@ -145,23 +169,25 @@ const GraphEditor = ({
     socketRef.current.emit("runSequence", payload);
   };
 
-  useEffect(() => {
-    // Save previously selected node.
-    if(selectedNode){
+  const onElementClick = (evt, node) => {
+    if (node.type === "ScriptNode") {
+      setSelectedNode(node);
+
       setElements((els) =>
         els.map((el) => {
-          if (el.id === selectedNode.id) {
-            el = selectedNode;
+          if (prevSelectedNode) {
+            // Unselect previous node.
+            if (el.id === prevSelectedNode.id) el.data.selected = false;
+          }
+          // Select new node.
+          if (el.id === node.id) {
+            el.data.selected = true;
           }
           return el;
         })
       );
-    }
-  }, [selectedNode])
 
-  const onElementClick = (evt, node) => {
-    if (node.type === "ScriptNode") {
-      setSelectedNode(node);
+      setPrevSelectedNode(node);
       return true;
     } else {
       return false;
@@ -215,60 +241,66 @@ const GraphEditor = ({
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
-  // const onDrop = (event) => {
-  //   event.preventDefault();
-  //   const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-  //   const type = event.dataTransfer.getData("application/reactflow");
-  //   const position = reactFlowInstance.project({
-  //     x: event.clientX - reactFlowBounds.left,
-  //     y: event.clientY - reactFlowBounds.top,
-  //   });
-
-  //   const id = uuid();
-
-  //   const newNode = {
-  //     id,
-  //     type,
-  //     position,
-  //     data: {
-  //       label: `new node`,
-  //       script: "",
-  //       breakpoints: [],
-  //       state: "STATE_SEQ_TASK_IDLE",
-  //     },
-  //   };
-
-  //   setElements([...elements, newNode]);
-  //   setSelectedNode(newNode);
-  // };
 
   return (
-    // <Wrapper>
-    <div style={{ padding: '.5rem' }}>
-      <div style={{ backgroundColor: "hsl(225, 6%, 13%)" }} className={`editor-title`}>
-        <Button
-          style={{ margin: "5px" }}
-          disabled={selectedNode.type !== "ScriptNode"}
-          onClick={() => handleRunSequence()}
-        >
-          Run Sequence
+    <div
+      style={{
+        border: '3px solid black',
+        flexGrow: 1,
+        flexBasis: 0,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{ backgroundColor: "hsl(225, 6%, 13%)" }}
+        className={`editor-title`}
+      >
+          <label
+            style={{
+              fontFamily: "myriad_pro_bold",
+              fontSize: "20px",
+              margin: "5px 20px",
+            }}
+          >
+            {project && project.id}
+          </label>
+        
+        <Button style={{ margin: "5px" }} onClick={() => handleRunSequence()}>
+          Run
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlayCircle} />
         </Button>
+        <Button style={{ margin: "5px" }} onClick={() => handleAdd()}>
+          Add
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlusCircle} />
+        </Button>
+
         <Button
-          style={{ margin: "5px" }}
-          disabled={selectedNode.type !== "ScriptNode"}
+          style={{ margin: "5px", float: "right" }}
           onClick={() => handleSave()}
         >
           Save
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faSave} />
         </Button>
-        <Button
-          style={{ margin: "5px" }}
-          onClick={() => handleAdd()}
-        >
-          Add Task
-        </Button>
-        <div className="updatenode__controls">
-          <label>Selected Task:</label>
+        <div className="updatenode__controls" style={{ float: "right" }}>
+          <label
+            style={{
+              fontFamily: "myriad_pro_bold",
+              fontSize: "20px",
+              margin: "5px",
+            }}
+          >
+            Edit:
+          </label>
           <input
+            style={{
+              margin: "5px",
+              borderRadius: "5px",
+              fontFamily: "croma_sans_regular",
+              height: "38px",
+              width: "100px",
+              padding: "5px",
+            }}
             value={selectedNodeName}
             onChange={(evt) => setSelectedNodeName(evt.target.value)}
           />
@@ -284,13 +316,13 @@ const GraphEditor = ({
               onElementsRemove={onElementsRemove}
               onElementClick={onElementClick}
               onLoad={onLoad}
-              // onDrop={onDrop}
               onDragOver={onDragOver}
               onNodeDragStart={onNodeDragStart}
               onNodeDragStop={onNodeDragStop}
               snapToGrid={true}
               snapGrid={[15, 15]}
             >
+              <Background variant="lines" gap={16} size={1} color="#dee9f2" />
               <Controls />
             </ReactFlow>
           </div>

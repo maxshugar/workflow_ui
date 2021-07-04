@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import "./index.css";
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown } from "react-bootstrap";
 
 export const CodeEditor = (props) => {
   const {
@@ -36,7 +36,7 @@ export const CodeEditor = (props) => {
   const debuggerStateRef = useRef(debuggerState);
   const socketRef = useRef(socket);
 
-  const [language, setLanguage] = useState('language');
+  const [language, setLanguage] = useState("language");
 
   const handleRun = () => {
     prettifyConsoleText(`Running ${selectedNode.data.label}, please wait..`);
@@ -47,7 +47,6 @@ export const CodeEditor = (props) => {
     socket.emit("debug", selectedNode.data);
   };
   const handleContinue = () => socket.emit("continue", selectedNode.data);
-  const handleStep = () => socket.emit("step", selectedNode.data);
   const handleAbort = () => socket.emit("abort");
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export const CodeEditor = (props) => {
     for (let i = 0; i < markers.length; i++) {
       markers[i].clear();
     }
-  }
+  };
 
   useEffect(() => {
     setMarkers([]);
@@ -73,12 +72,11 @@ export const CodeEditor = (props) => {
   };
 
   useEffect(() => {
-    
     let selectedNodeCopy = { ...selectedNode };
     selectedNodeCopy.data.language = language;
     setSelectedNode(selectedNodeCopy);
     editorRef.current.setOption("mode", language);
-    console.log(editorRef.current)
+    console.log(editorRef.current);
   }, [language]);
 
   useEffect(() => {
@@ -118,18 +116,26 @@ export const CodeEditor = (props) => {
         socket.emit("getState");
         break;
       case "STATE_IDLE":
-        if (prevState) {
-          if (
-            prevState.state == "STATE_BREAKPOINT_ADDED" ||
-            prevState.state == "STATE_BREAKPOINT_REMOVED"
-          )
-            break;
-          else if (prevState.state == "STATE_ABORTED") {
-            // Add current breakpoints back to new debugger instance after abort.
-            socket.emit("addBreakpoints", selectedNode.data.breakpoints);
+        const engineType = debuggerState.engineType;
+
+        console.log(debuggerState);
+
+        if (engineType === "python") {
+          if (prevState) {
+            if (
+              prevState.state == "STATE_BREAKPOINT_ADDED" ||
+              prevState.state == "STATE_BREAKPOINT_REMOVED"
+            )
+              break;
+            else if (prevState.state == "STATE_ABORTED") {
+              // Add current breakpoints back to new debugger instance after abort.
+              socket.emit("addBreakpoints", selectedNode.data.breakpoints);
+            }
           }
+          prettifyConsoleText(`Python engine ready.`, "INFO");
+        } else if (engineType === "javascript") {
+          prettifyConsoleText(`JavaScript engine ready.`, "INFO");
         }
-        prettifyConsoleText(`Process engine ready.`, "INFO");
         setIsReady(true);
         setIsRunning(false);
         setIsDebugging(false);
@@ -161,8 +167,7 @@ export const CodeEditor = (props) => {
 
   // Update breakpoints when switching between nodes.
   useEffect(() => {
-
-    setLanguage(selectedNode.data.language)
+    setLanguage(selectedNode.data.language);
 
     // If a new node has been selected.
     if (selectedNode.id != selectedNodeRef.current.id) {
@@ -223,16 +228,13 @@ export const CodeEditor = (props) => {
   }
 
   function handleGutterClick(editor, line, str, ent) {
+    if (selectedNodeRef.current.type !== "ScriptNode") return;
 
-    if(selectedNodeRef.current.type !== 'ScriptNode')
-      return;
-    
-    if(selectedNodeRef.current.data.language !== 'python')
-      return;
+    if (selectedNodeRef.current.data.language !== "python") return;
 
     let socket = socketRef.current;
     editorRef.current = editor;
-    
+
     let val = breakpointExists(line);
 
     if (!breakpointExists(line)) {
@@ -247,84 +249,76 @@ export const CodeEditor = (props) => {
   }
 
   return (
-    // <div className={`editor-container ${open ? "" : "collapsed"}`}>
     <div className={`editor-container`}>
       <div className="editor-title">
-        <h5>Editor Title</h5>
-        <div>
-          <Button
-            style={{ margin: "5px" }}
-            onClick={() => handleRun()}
-            disabled={
-              selectedNode.type !== "ScriptNode" ||
-              isRunning ||
-              isDebugging ||
-              !isReady
-            }
-          >
-            Run
-            <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlay} />
-          </Button>
+        <Button
+          style={{ margin: "5px" }}
+          onClick={() => handleRun()}
+          disabled={
+            selectedNode.type !== "ScriptNode" ||
+            isRunning ||
+            isDebugging ||
+            !isReady
+          }
+        >
+          Run
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlay} />
+        </Button>
 
-          <Button
-            style={{ margin: "5px" }}
-            onClick={() => handleDebug()}
-            disabled={
-              selectedNode.type !== "ScriptNode" ||
-              isDebugging ||
-              isRunning ||
-              !isReady
-            }
-          >
-            Debug
-            <FontAwesomeIcon
-              style={{ marginLeft: "10px" }}
-              icon={faPlayCircle}
-            />
-          </Button>
+        <Button
+          style={{ margin: "5px" }}
+          onClick={() => handleDebug()}
+          disabled={
+            selectedNode.type !== "ScriptNode" ||
+            isDebugging ||
+            isRunning ||
+            !isReady
+          }
+        >
+          Debug
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlayCircle} />
+        </Button>
 
-          <Button
-            style={{ margin: "5px" }}
-            onClick={() => handleContinue()}
-            disabled={!isDebugging || !isReady}
-          >
-            Continue
-            <FontAwesomeIcon
-              style={{ marginLeft: "10px" }}
-              icon={faStepForward}
-            />
-          </Button>
+        <Button
+          style={{ margin: "5px" }}
+          onClick={() => handleContinue()}
+          disabled={!isDebugging || !isReady}
+        >
+          Continue
+          <FontAwesomeIcon
+            style={{ marginLeft: "10px" }}
+            icon={faStepForward}
+          />
+        </Button>
 
-          <Button
-            style={{ margin: "5px" }}
-            onClick={() => handleStep()}
-            disabled={!isDebugging || !isReady}
-          >
-            Step
-            <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faShare} />
-          </Button>
+        <Button
+          style={{ margin: "5px" }}
+          onClick={() => handleAbort()}
+          disabled={(!isRunning && !isDebugging) || !isReady}
+          variant="warning"
+        >
+          Abort
+          <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faStopCircle} />
+        </Button>
 
-          <Button
-            style={{ margin: "5px" }}
-            onClick={() => handleAbort()}
-            disabled={(!isRunning && !isDebugging) || !isReady}
+        <Dropdown style={{ display: "inline-block", width: "120px", float: 'right', margin: '5px' }} alignRight>
+          <Dropdown.Toggle
+            variant="info"
+            
+            id="dropdown-basic"
+            disabled={selectedNode && selectedNode.type !== "ScriptNode"}
           >
-            Abort
-            <FontAwesomeIcon
-              style={{ marginLeft: "10px" }}
-              icon={faStopCircle}
-            />
-          </Button>
-          <Dropdown style={{display: 'inline-block', width: '120px'}} >
-            <Dropdown.Toggle variant="success" id="dropdown-basic" disabled={selectedNode && selectedNode.type !== 'ScriptNode'}>
-              {language}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setLanguage('python')} >Python</Dropdown.Item>
-              <Dropdown.Item onClick={() => setLanguage('javascript')}>JavaScript</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+            {language.charAt(0).toUpperCase() + language.slice(1)}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => setLanguage("python")}>
+              Python
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setLanguage("javascript")}>
+              JavaScript
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
       <ControlledEditor
         onBeforeChange={handleChange}

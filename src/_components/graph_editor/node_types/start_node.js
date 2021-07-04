@@ -2,15 +2,17 @@ import React from 'react';
 import ReactFlow, { Handle } from 'react-flow-renderer';
 
 const customNodeStyles = {
-    backgroundColor: 'blue',
+    background: '#5680E9',
     color: '#FFF',
     padding: 10,
+    fontFamily: 'croma_sans_regular',
+    borderRadius: '10px',
 };
 
 export const StartNode = ({ data }) => {
     return (
       <div style={customNodeStyles}>
-        <div>START</div>
+        <div>Start</div>
         <Handle
           type="source"
           position="bottom"

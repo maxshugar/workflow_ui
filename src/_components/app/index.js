@@ -1,5 +1,7 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
+import ReactNotification from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
 
 import { PrivateRoute } from "../private_route";
 import { NavBar } from "../navbar";
@@ -19,6 +21,7 @@ export const App = () => {
   const location = useLocation();
   return (
     <React.Fragment>
+      <ReactNotification/>
       <NavBar location={location} />
       <Switch>
         <Route path="/" exact component={Home} />

@@ -9,7 +9,6 @@ import { Console } from "../console";
 
 import socketIOClient from "socket.io-client";
 import { get as getProject } from "../../features/projectSlice";
-import SideBar from "../sidebar";
 import Split from "react-split";
 
 let socket = null;
@@ -53,22 +52,22 @@ export const Project = () => {
 
       switch(state){
         case 'STATE_SEQ_RUNNING':
-          setConsoleText({ text: 'v8 sequencer starting.', style: { color: "green" } });
+          prettifyConsoleText('Sequencer starting.', 'INFO');
         break;
         case 'STATE_SEQ_COMPLETE':
-          setConsoleText({ text: 'v8 sequencer complete.', style: { color: "green" } });
+          prettifyConsoleText('Sequencer complete.', 'INFO');
         break;
         case 'STATE_SEQ_IDLE':
-          setConsoleText({ text: `v8 sequencer idle.`, style: { color: "aqua" } });
+          prettifyConsoleText('Sequencer idle.', 'INFO');
         break;
         case 'STATE_SEQ_TASK_RUNNING':
-          setConsoleText({ text: `[${name}] running.`, style: { color: "aqua" } });
+          prettifyConsoleText(`[${name}] running.`, 'INFO');
         break;
         case 'STATE_SEQ_TASK_COMPLETE':
-          setConsoleText({ text: `[${name}] complete.`, style: { color: "green" } });
+          prettifyConsoleText(`[${name}] complete.`, 'INFO');
         break;
         case 'STATE_SEQ_TASK_ERROR':
-          setConsoleText({ text: `[${name}] error.`, style: { color: "red" } });
+          prettifyConsoleText(`[${name}] error.`, 'INFO');
         break;
       }
 
@@ -90,6 +89,8 @@ export const Project = () => {
     position: { x: 250, y: 100 },
   });
 
+  const [prevSelectedNode, setPrevSelectedNode] = useState(null);
+
   const prettifyConsoleText = (text, type) => {
     const formattedText = `[${user.data.login}] ${text}`;
     if (type == "INFO")
@@ -103,9 +104,9 @@ export const Project = () => {
 
   return (
     <>
-      <Container fluid style={{ maxHeight: "100%" }}>
+      <Container fluid style={{ maxHeight: "100%", marginTop: '20px' }}>
         <Wrapper>
-          <Split className="split" direction="horizontal">
+          <Split className="split" direction="horizontal" minSize={700}>
             <div>
 
                   <CodeEditor
@@ -122,6 +123,8 @@ export const Project = () => {
               <GraphEditor
                 selectedNode={selectedNode}
                 setSelectedNode={setSelectedNode}
+                prevSelectedNode={prevSelectedNode}
+                setPrevSelectedNode={setPrevSelectedNode}
                 project={project}
                 socket={socket}
                 sequencerState={sequencerState}
