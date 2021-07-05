@@ -7,13 +7,13 @@
 }
 
 .icon{
-	color: #358b41;
+	color: #8850D0;
 	font-size: 3em;
 	transition: all .2s ease-in-out;
 }
 
 .icon:hover{
-	color: #21b86d;
+	color: #8850D0;
 	cursor: pointer;
 	transform: scale(1.1, 1.1);
 	-ms-transform: scale(1.1, 1.1);
@@ -24,7 +24,6 @@
 	margin-top: 10px;
 	font-size: 1.3em;
 	font-family: "croma_sans_medium";
-	background: linear-gradient(to right, #26947c 0%, #53c98e 100%);
+	color: #8850D0;
 	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
 }

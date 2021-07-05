@@ -33,13 +33,10 @@ export const Console = ({ consoleText }) => {
       const { stdout } = terminal.state
       if (terminal.props.locked) stdout.pop()
       stdout.push({ message, isEcho: options?.isEcho || false, style })
-      /* istanbul ignore next: Covered by interactivity tests */
       if (options?.rawInput) terminal.pushToHistory(options.rawInput)
       terminal.setState({ stdout: stdout })
     } 
-
     terminal.getStdout = () => {
-      // Parse EOL if it isn't disabled
       const stdoutLocal = !terminal.props.noNewlineParsing
         ? parseEOL(terminal.state.stdout)
         : terminal.state.stdout;
@@ -57,7 +54,7 @@ export const Console = ({ consoleText }) => {
             }
             style={line.style}
           />
-        );
+        ); 
       });
     };
   }, [terminalRef]);

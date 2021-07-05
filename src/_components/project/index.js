@@ -40,6 +40,9 @@ export const Project = () => {
     });
 
     socket.on("error", (err) => {
+
+      console.log(err)
+
       setConsoleText({ text: err, style: { color: "red" } });
     });
 
@@ -96,7 +99,7 @@ export const Project = () => {
     if (type == "INFO")
       setConsoleText({ text: formattedText, style: { color: "aqua" } });
     else if (type == "SUCCESS")
-      setConsoleText({ text: formattedText, style: { color: "green" } });
+      setConsoleText({ text: formattedText, style: { color: '#41FF00' } });
     else setConsoleText({ text: formattedText });
   };
 

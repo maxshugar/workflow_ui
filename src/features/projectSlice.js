@@ -57,6 +57,7 @@ export const create = createAsyncThunk(
 );
 
 export const update = createAsyncThunk("project/update", (project) => {
+  console.log(project)
   return fetch(`http://localhost:4000/v1/project/${project.id}`, {
     method: "PUT",
     body: JSON.stringify(project),
@@ -182,6 +183,7 @@ export const projectSlice = createSlice({
     },
     [update.fulfilled]: (state, action) => {
       displayNotification("Success", "Project saved successfully.", "success");
+      console.log(action)
       state.project = makeFulfilledState(action);
     },
     [update.rejected]: (state, action) => {

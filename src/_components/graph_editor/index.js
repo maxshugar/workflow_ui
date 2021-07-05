@@ -55,6 +55,7 @@ const GraphEditor = ({
 
   useEffect(() => {
     if (project) {
+      console.log(project)
       if (project.hasOwnProperty("elements")) {
         setElements(JSON.parse(JSON.stringify(project.elements)));
         resetTaskIcons();
@@ -81,6 +82,10 @@ const GraphEditor = ({
   }, [sequencerState]);
 
   const handleSave = () => {
+
+    if(!Object.keys(project).length)
+      console.log('why is project empty?')
+
     let newProject = { ...project };
     newProject.elements = elements;
     let selectedId = null;
@@ -123,7 +128,7 @@ const GraphEditor = ({
       data: {
         label: `new node`,
         script: "",
-        language: selectedNode.data.language || "python",
+        language: "python",
         breakpoints: [],
         state: "STATE_SEQ_TASK_IDLE",
       },
@@ -298,7 +303,7 @@ const GraphEditor = ({
               borderRadius: "5px",
               fontFamily: "croma_sans_regular",
               height: "38px",
-              width: "100px",
+              width: "150px",
               padding: "5px",
             }}
             value={selectedNodeName}

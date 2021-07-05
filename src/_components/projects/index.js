@@ -47,7 +47,7 @@ export const Projects = () => {
   };
 
   const handleEdit = (id) => {
-    console.log(id);
+    let newProject = {...project};
   };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);

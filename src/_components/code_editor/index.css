@@ -47,7 +47,16 @@
 }
 
 .CodeMirror {
+  background-color: rgb(33,33,33) !important;
   height: 100% !important;
+}
+
+.CodeMirror-gutter{
+  background-color: rgb(33,33,33) !important;
+}
+
+.CodeMirror-linenumber{
+  color: rgb(128, 130, 143)  !important;
 }
 
 .code-mirror-wrapper {

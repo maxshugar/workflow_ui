@@ -36,8 +36,6 @@ export const Login = () => {
     <Wrapper>
       <section className="container">
         <div>
-          <h1>Auth0 Sign In</h1>
-          <span>{data.errorMessage}</span>
           <div className="login-container">
             {data.isLoading ? (
               <div className="loader-container">
@@ -55,8 +53,8 @@ export const Login = () => {
                     setData({ ...data, errorMessage: "" });
                   }}
                 >
-                  <GithubIcon />
-                  <span>Login with GitHub</span>
+                  <GithubIcon style={{marginRight: '10px'}} />
+                  <h5 style={{margin: 'auto'}}>Login with GitHub</h5>
                 </a>
               </>
             )}
@@ -72,7 +70,7 @@ const Wrapper = Styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 50vh;
     font-family: Arial;
     
     > div:nth-child(1) {
@@ -82,21 +80,9 @@ const Wrapper = Styled.section`
       align-items: center;
       box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
       transition: 0.3s;
-      width: 25%;
+      width: 50%;
       height: 45%;
-      > h1 {
-        font-size: 2rem;
-        margin-bottom: 20px;
-      }
-      > span:nth-child(2) {
-        font-size: 1.1rem;
-        color: #808080;
-        margin-bottom: 70px;
-      }
-      > span:nth-child(3) {
-        margin: 10px 0 20px;
-        color: red;
-      }
+
       .login-container {
         background-color: #000;
         width: 70%;
@@ -109,13 +95,10 @@ const Wrapper = Styled.section`
           text-decoration: none;
           color: #fff;
           text-transform: uppercase;
-          cursor: default;
+          cursor: pointer;
           display: flex;
           align-items: center;          
           height: 40px;
-          > span:nth-child(2) {
-            margin-left: 5px;
-          }
         }
         .loader-container {
           display: flex;
